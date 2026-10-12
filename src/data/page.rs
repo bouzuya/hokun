@@ -29,10 +29,13 @@ impl Pages {
     }
 
     pub fn find_by_book_id(&self, book_id: &str) -> Vec<&Page> {
+        self.0.iter().filter(|it| it.book_id == book_id).collect()
+    }
+
+    pub fn find_by_id(&self, book_id: &str, page_id: &str) -> Option<&Page> {
         self.0
             .iter()
-            .filter(|page| page.book_id == book_id)
-            .collect()
+            .find(|it| it.book_id == book_id && it.id == page_id)
     }
 }
 

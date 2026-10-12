@@ -3,17 +3,20 @@ mod new;
 
 use crate::data::Books;
 use crate::data::Pages;
+use crate::data::Reports;
 
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
     let books = Books::dummy();
     let pages = Pages::dummy(&books);
+    let reports = Reports::dummy(&books, &pages);
 
     Ok(::topcoat::router::module_router!()
         .discover()
         .app_context(books)
         .app_context(pages)
+        .app_context(reports)
         .build())
 }
 
@@ -27,6 +30,8 @@ pub struct QueryParams {
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
 
+    let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
+
     let date = date
         .as_deref()
         .map(|s| {
@@ -37,6 +42,11 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             }
         })
         .flatten();
+
+    let reports_by_date = match date {
+        None => Vec::new(),
+        Some(date) => reports.find_by_date(date),
+    };
 
     Ok(::topcoat::view::view! {
         <!DOCTYPE html>
@@ -126,27 +136,41 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                     crate::app::new::QueryParams { date: date.to_string() },
                                 ))
                             >
-                                "あたらしく ほうこく"
+                                "あたらしい ほうこく"
                             </a>
                         </p>
                         (date)
                         <ul>
-                            <li>
-                                <a href="/edit/123">
-                                    <span>"さんすう"</span>
-                                    <span>"27"</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/edit/456">
-                                    <span>"こくご"</span>
-                                    <span>"36"</span>
-                                </a>
-                            </li>
+                            for report in &reports_by_date {
+                                <li>report_link(report: report)</li>
+                            }
                         </ul>
                     }
                 }
             </body>
         </html>
+    })
+}
+
+#[::topcoat::view::component]
+pub async fn report_link(
+    cx: &::topcoat::context::Cx,
+    report: &crate::data::Report,
+) -> ::topcoat::Result<impl ::topcoat::view::View> {
+    let books = ::topcoat::context::app_context::<Books>(cx);
+    let pages = ::topcoat::context::app_context::<Pages>(cx);
+
+    let book_name = books.find_by_id(&report.book_id).unwrap().name.clone();
+    let book_page_name = pages
+        .find_by_id(&report.book_id, &report.page_id)
+        .unwrap()
+        .name
+        .clone();
+
+    Ok(::topcoat::view::view! {
+        <a href=(format!("/edit/{}", report.id))>
+            <span>(book_name)</span>
+            <span>(book_page_name)</span>
+        </a>
     })
 }

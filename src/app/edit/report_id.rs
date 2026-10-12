@@ -1,3 +1,5 @@
+use topcoat::router::error::RouterErrorExt;
+
 ::topcoat::router::module_param!(pub report_id: String, error = bad_request);
 
 #[::topcoat::router::page]
@@ -8,12 +10,13 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
     let books = books.find_all();
     let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
+    let report = ::topcoat::context::app_context::<crate::app::Reports>(cx);
+    let report = report.find_by_id(&report_id).ok_or_not_found()?;
 
-    let date = "2026-10-12".to_string();
-    let book_id = books[1].id.clone();
-    // FIXME
+    let date = report.date.clone();
+    let book_id = report.book_id.clone();
     let book_pages = pages.find_by_book_id(&book_id);
-    let page_id = book_pages[0].id.clone();
+    let page_id = report.page_id.clone();
 
     Ok(::topcoat::view::view! {
         <!DOCTYPE html>
