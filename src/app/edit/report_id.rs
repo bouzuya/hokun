@@ -5,7 +5,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let report_id: &String = ::topcoat::router::path_param::<ReportId>(cx)?;
     let report_id = report_id.to_string();
 
-    let books = &::topcoat::context::app_context::<crate::app::Books>(cx).0;
+    let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
+    let books = books.find_all();
     let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx).0;
 
     // FIXME

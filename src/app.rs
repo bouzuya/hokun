@@ -1,14 +1,9 @@
 mod edit;
 mod new;
 
-pub struct Books(pub Vec<Book>);
-
-pub struct Book {
-    pub id: String,
-    pub name: String,
-}
-
 pub struct Pages(pub Vec<Page>);
+
+use crate::data::Books;
 
 pub struct Page {
     pub book_id: String,
@@ -19,33 +14,21 @@ pub struct Page {
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
-    let books = vec![
-        Book {
-            id: "kokugo".to_string(),
-            name: "こくご".to_string(),
-        },
-        Book {
-            id: "sansuu".to_string(),
-            name: "さんすう".to_string(),
-        },
-        Book {
-            id: "eigo".to_string(),
-            name: "えいご".to_string(),
-        },
-    ];
+    let books = Books::dummy();
+    let books_vec = books.find_all();
 
     let pages = {
         let mut pages = vec![];
         for page_id in 1..=30 {
             pages.push(Page {
-                book_id: books[0].id.clone(),
+                book_id: books_vec[0].id.clone(),
                 id: page_id.to_string(),
                 name: page_id.to_string(),
             });
         }
         for page_id in 1..=40 {
             pages.push(Page {
-                book_id: books[1].id.clone(),
+                book_id: books_vec[1].id.clone(),
                 id: page_id.to_string(),
                 name: page_id.to_string(),
             });
@@ -55,7 +38,7 @@ pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
 
     Ok(::topcoat::router::module_router!()
         .discover()
-        .app_context(Books(books))
+        .app_context(books)
         .app_context(Pages(pages))
         .build())
 }
