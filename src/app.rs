@@ -1,3 +1,7 @@
+use topcoat::runtime::internal::serde;
+
+mod new;
+
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
@@ -5,12 +9,13 @@ pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
 }
 
 #[::topcoat::router::query_params(error = bad_request)]
-struct QueryParams {
-    date: Option<String>,
+#[derive(serde::Serialize)]
+pub struct QueryParams {
+    pub date: Option<String>,
 }
 
 #[::topcoat::router::page]
-async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
+pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
 
     let date = date
@@ -93,24 +98,41 @@ async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::
                 </table>
                 match date {
                     None => {
-                <p><a href="/new">"あたらしく ほうこく"</a></p>
-
+                        <p>
+                            <a
+                                href=(::topcoat::router::href!(crate::app::new::page).query(
+                                    crate::app::new::QueryParams {
+                                        date: "2026-10-12".to_string(),
+                                    },
+                                ))
+                            >
+                                "あたらしく ほうこく"
+                            </a>
+                        </p>
                     }
                     Some(date) => {
-                <p><a href=(format!("/new?date={}", date))>"あたらしく ほうこく"</a></p>
+                        <p>
+                            <a
+                                href=(::topcoat::router::href!(crate::app::new::page).query(
+                                    crate::app::new::QueryParams { date: date.to_string() },
+                                ))
+                            >
+                                "あたらしく ほうこく"
+                            </a>
+                        </p>
                         (date)
                         <ul>
                             <li>
-                            <a href="/edit?id=123">
-                                <span>"さんすう"</span>
-                                <span>"27"</span>
-                            </a>
+                                <a href="/edit?id=123">
+                                    <span>"さんすう"</span>
+                                    <span>"27"</span>
+                                </a>
                             </li>
                             <li>
-                            <a href="/edit?id=456">
-                                <span>"こくご"</span>
-                                <span>"36"</span>
-                            </a>
+                                <a href="/edit?id=456">
+                                    <span>"こくご"</span>
+                                    <span>"36"</span>
+                                </a>
                             </li>
                         </ul>
                     }
