@@ -9,13 +9,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
     let books = books.find_all();
-    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx).0;
+    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
 
     // FIXME
-    let book_pages = pages
-        .iter()
-        .filter(|page| page.book_id == books[0].id)
-        .collect::<Vec<_>>();
+    let book_pages = pages.find_by_book_id(&books[0].id);
 
     let date = if date.chars().all(|c| c.is_ascii_digit() || c == '-') {
         Ok(date)

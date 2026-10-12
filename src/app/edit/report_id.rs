@@ -7,16 +7,12 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
     let books = books.find_all();
-    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx).0;
-
-    // FIXME
-    let book_pages = pages
-        .iter()
-        .filter(|page| page.book_id == books[1].id)
-        .collect::<Vec<_>>();
+    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
 
     let date = "2026-10-12".to_string();
     let book_id = books[1].id.clone();
+    // FIXME
+    let book_pages = pages.find_by_book_id(&book_id);
     let page_id = book_pages[0].id.clone();
 
     Ok(::topcoat::view::view! {

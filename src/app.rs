@@ -1,45 +1,19 @@
 mod edit;
 mod new;
 
-pub struct Pages(pub Vec<Page>);
-
 use crate::data::Books;
-
-pub struct Page {
-    pub book_id: String,
-    pub id: String,
-    pub name: String,
-}
+use crate::data::Pages;
 
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
     let books = Books::dummy();
-    let books_vec = books.find_all();
-
-    let pages = {
-        let mut pages = vec![];
-        for page_id in 1..=30 {
-            pages.push(Page {
-                book_id: books_vec[0].id.clone(),
-                id: page_id.to_string(),
-                name: page_id.to_string(),
-            });
-        }
-        for page_id in 1..=40 {
-            pages.push(Page {
-                book_id: books_vec[1].id.clone(),
-                id: page_id.to_string(),
-                name: page_id.to_string(),
-            });
-        }
-        pages
-    };
+    let pages = Pages::dummy(&books);
 
     Ok(::topcoat::router::module_router!()
         .discover()
         .app_context(books)
-        .app_context(Pages(pages))
+        .app_context(pages)
         .build())
 }
 
