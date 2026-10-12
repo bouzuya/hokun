@@ -1,12 +1,35 @@
-use topcoat::runtime::internal::serde;
-
 mod edit;
 mod new;
+
+pub struct Books(pub Vec<Book>);
+
+pub struct Book {
+    pub id: String,
+    pub name: String,
+}
 
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
-    Ok(::topcoat::router::module_router!().discover().build())
+    let books = vec![
+        Book {
+            id: "kokugo".to_string(),
+            name: "こくご".to_string(),
+        },
+        Book {
+            id: "sansuu".to_string(),
+            name: "さんすう".to_string(),
+        },
+        Book {
+            id: "eigo".to_string(),
+            name: "えいご".to_string(),
+        },
+    ];
+
+    Ok(::topcoat::router::module_router!()
+        .discover()
+        .app_context(Books(books))
+        .build())
 }
 
 #[::topcoat::router::query_params(error = bad_request)]

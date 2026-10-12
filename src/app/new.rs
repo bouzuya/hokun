@@ -7,6 +7,7 @@ pub struct QueryParams {
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
+    let books = &::topcoat::context::app_context::<crate::app::Books>(cx).0;
 
     let date = if date.chars().all(|c| c.is_ascii_digit() || c == '-') {
         Ok(date)
@@ -40,8 +41,9 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                         <label>
                             "ドリル"
                             <select name="book_id">
-                                <option value="kokugo">"こくご"</option>
-                                <option value="sansuu">"さんすう"</option>
+                                for book in books {
+                                    <option value=(&book.id)>(&book.name)</option>
+                                }
                             </select>
                         </label>
                     </div>

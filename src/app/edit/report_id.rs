@@ -5,8 +5,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let report_id: &String = ::topcoat::router::path_param::<ReportId>(cx)?;
     let report_id = report_id.to_string();
 
+    let books = &::topcoat::context::app_context::<crate::app::Books>(cx).0;
+
     let date = "2026-10-12".to_string();
-    let book_id = "kokugo".to_string();
+    let book_id = books[1].id.clone();
     let page_id = "26".to_string();
 
     Ok(::topcoat::view::view! {
@@ -37,9 +39,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <div>
                         <label>
                             "ドリル"
-                            <select name="book_id" value=(book_id)>
-                                <option value="kokugo">"こくご"</option>
-                                <option value="sansuu">"さんすう"</option>
+                            <select name="book_id">
+                                for book in books {
+                                    <option selected=(&book.id == &book_id) value=(&book.id)>(&book.name)</option>
+                                }
                             </select>
                         </label>
                     </div>
