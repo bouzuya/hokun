@@ -1,3 +1,5 @@
+use chrono::Datelike as _;
+
 pub mod new;
 pub mod report_id;
 
@@ -53,6 +55,41 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
         Some(date) => reports.find_by_date(date),
     };
 
+    let now = ::chrono::Local::now();
+    let dates_in_month = (1_u8..=now.num_days_in_month())
+        .map(|d| now.with_day(u32::from(d)).expect("day should be valid"))
+        .collect::<Vec<::chrono::DateTime<::chrono::Local>>>();
+    let mut weeks = vec![];
+    let mut week = vec![];
+    for w in ::chrono::Weekday::Mon.num_days_from_monday()
+        ..dates_in_month[0].weekday().num_days_from_monday()
+    {
+        if dates_in_month
+            .first()
+            .unwrap()
+            .weekday()
+            .num_days_from_monday()
+            == w
+        {
+            break;
+        }
+        week.push(None);
+    }
+    for date in dates_in_month {
+        week.push(Some(date));
+        if week.len() == 7 {
+            weeks.push(week);
+            week = vec![];
+        }
+    }
+    if !week.is_empty() {
+        let week_len = week.len();
+        for _ in week_len as u32..=::chrono::Weekday::Sun.num_days_from_monday() {
+            week.push(None);
+        }
+        weeks.push(week);
+    }
+
     Ok(::topcoat::view::view! {
         <!DOCTYPE html>
         <html lang="ja">
@@ -76,62 +113,46 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     </a>
                 </p>
 
-                <p>"2026-10"</p>
+                let current_month = now.format("%Y-%m").to_string();
+                <p>(current_month)</p>
                 <table>
-                    <tr>
-                        <th>"月"</th>
-                        <th>"火"</th>
-                        <th>"水"</th>
-                        <th>"木"</th>
-                        <th>"金"</th>
-                        <th>"土"</th>
-                        <th>"日"</th>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><a href="?date=2026-10-01">"1"</a></td>
-                        <td><a href="?date=2026-10-02">"2"</a></td>
-                        <td><a href="?date=2026-10-03">"3"</a></td>
-                        <td><a href="?date=2026-10-04">"4"</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="?date=2026-10-05">"5"</a></td>
-                        <td><a href="?date=2026-10-06">"6"</a></td>
-                        <td><a href="?date=2026-10-07">"7"</a></td>
-                        <td><a href="?date=2026-10-08">"8"</a></td>
-                        <td><a href="?date=2026-10-09">"9"</a></td>
-                        <td><a href="?date=2026-10-10">"10"</a></td>
-                        <td><a href="?date=2026-10-11">"11"</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="?date=2026-10-12">"12"</a></td>
-                        <td><a href="?date=2026-10-13">"13"</a></td>
-                        <td><a href="?date=2026-10-14">"14"</a></td>
-                        <td><a href="?date=2026-10-15">"15"</a></td>
-                        <td><a href="?date=2026-10-16">"16"</a></td>
-                        <td><a href="?date=2026-10-17">"17"</a></td>
-                        <td><a href="?date=2026-10-18">"18"</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="?date=2026-10-19">"19"</a></td>
-                        <td><a href="?date=2026-10-20">"20"</a></td>
-                        <td><a href="?date=2026-10-21">"21"</a></td>
-                        <td><a href="?date=2026-10-22">"22"</a></td>
-                        <td><a href="?date=2026-10-23">"23"</a></td>
-                        <td><a href="?date=2026-10-24">"24"</a></td>
-                        <td><a href="?date=2026-10-25">"25"</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="?date=2026-10-26">"26"</a></td>
-                        <td><a href="?date=2026-10-27">"27"</a></td>
-                        <td><a href="?date=2026-10-28">"28"</a></td>
-                        <td><a href="?date=2026-10-29">"29"</a></td>
-                        <td><a href="?date=2026-10-30">"30"</a></td>
-                        <td><a href="?date=2026-10-31">"31"</a></td>
-                        <td></td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>"月"</th>
+                            <th>"火"</th>
+                            <th>"水"</th>
+                            <th>"木"</th>
+                            <th>"金"</th>
+                            <th>"土"</th>
+                            <th>"日"</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        for week in weeks {
+                            <tr>
+                                for d in week {
+                                    match d {
+                                        None => {
+                                            <td></td>
+                                        }
+                                        Some(d) => {
+                                            <td>
+                                                <a
+                                                    href=(::topcoat::router::href!(crate::app::reports::page).query(
+                                                        crate::app::reports::QueryParams {
+                                                            date: Some(d.format("%Y-%m-%d").to_string()),
+                                                        },
+                                                    ))
+                                                >
+                                                    (d.day())
+                                                </a>
+                                            </td>
+                                        }
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
                 </table>
                 match date {
                     None => {
