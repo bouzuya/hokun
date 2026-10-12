@@ -25,6 +25,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <body>
                 <h1>"あたらしい ほうこく"</h1>
 
+                <p><a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a></p>
+
                 <form action="/" method="post">
                     <div>
                         <label>
