@@ -6,10 +6,17 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let report_id = report_id.to_string();
 
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx).0;
+    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx).0;
+
+    // FIXME
+    let book_pages = pages
+        .iter()
+        .filter(|page| page.book_id == books[1].id)
+        .collect::<Vec<_>>();
 
     let date = "2026-10-12".to_string();
     let book_id = books[1].id.clone();
-    let page_id = "26".to_string();
+    let page_id = book_pages[0].id.clone();
 
     Ok(::topcoat::view::view! {
         <!DOCTYPE html>
@@ -22,10 +29,17 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <body>
                 <h1>"ほうこく の へんしゅう"</h1>
 
-                <p><a href=(::topcoat::router::href!(crate::app::page).query(crate::app::QueryParams { date: Some(date.clone())}))>"もどる"</a></p>
+                <p>
+                    <a
+                        href=(::topcoat::router::href!(crate::app::page).query(
+                            crate::app::QueryParams { date: Some(date.clone()) },
+                        ))
+                    >
+                        "もどる"
+                    </a>
+                </p>
 
                 <form action=(format!("/{}", report_id)) method="post">
-
                     <input type="hidden" name="report_id" value=(report_id) />
 
                     <div>
@@ -41,7 +55,9 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                             "ドリル"
                             <select name="book_id">
                                 for book in books {
-                                    <option selected=(&book.id == &book_id) value=(&book.id)>(&book.name)</option>
+                                    <option selected=(&book.id == &book_id) value=(&book.id)>
+                                        (&book.name)
+                                    </option>
                                 }
                             </select>
                         </label>
@@ -50,11 +66,12 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <div>
                         <label>
                             "ページ"
-                            <select name="page_id" value=(page_id)>
-                                <option value="26">"26"</option>
-                                <option value="27">"27"</option>
-                                <option value="28">"28"</option>
-                                <option value="29">"29"</option>
+                            <select name="page_id">
+                                for page in book_pages {
+                                    <option selected=(&page.id == &page_id) value=(&page.id)>
+                                        (&page.name)
+                                    </option>
+                                }
                             </select>
                         </label>
                     </div>

@@ -8,6 +8,13 @@ pub struct QueryParams {
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx).0;
+    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx).0;
+
+    // FIXME
+    let book_pages = pages
+        .iter()
+        .filter(|page| page.book_id == books[0].id)
+        .collect::<Vec<_>>();
 
     let date = if date.chars().all(|c| c.is_ascii_digit() || c == '-') {
         Ok(date)
@@ -26,7 +33,9 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <body>
                 <h1>"あたらしい ほうこく"</h1>
 
-                <p><a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a></p>
+                <p>
+                    <a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a>
+                </p>
 
                 <form action="/" method="post">
                     <div>
@@ -52,10 +61,9 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                         <label>
                             "ページ"
                             <select name="page_id">
-                                <option value="26">"26"</option>
-                                <option value="27">"27"</option>
-                                <option value="28">"28"</option>
-                                <option value="29">"29"</option>
+                                for page in book_pages {
+                                    <option value=(&page.id)>(&page.name)</option>
+                                }
                             </select>
                         </label>
                     </div>

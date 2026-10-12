@@ -8,6 +8,14 @@ pub struct Book {
     pub name: String,
 }
 
+pub struct Pages(pub Vec<Page>);
+
+pub struct Page {
+    pub book_id: String,
+    pub id: String,
+    pub name: String,
+}
+
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
@@ -26,9 +34,29 @@ pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
         },
     ];
 
+    let pages = {
+        let mut pages = vec![];
+        for page_id in 1..=30 {
+            pages.push(Page {
+                book_id: books[0].id.clone(),
+                id: page_id.to_string(),
+                name: page_id.to_string(),
+            });
+        }
+        for page_id in 1..=40 {
+            pages.push(Page {
+                book_id: books[1].id.clone(),
+                id: page_id.to_string(),
+                name: page_id.to_string(),
+            });
+        }
+        pages
+    };
+
     Ok(::topcoat::router::module_router!()
         .discover()
         .app_context(Books(books))
+        .app_context(Pages(pages))
         .build())
 }
 
