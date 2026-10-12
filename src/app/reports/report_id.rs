@@ -1,4 +1,6 @@
-pub mod report_id;
+pub mod edit;
+
+::topcoat::router::module_param!(pub report_id: String, error = bad_request);
 
 #[::topcoat::router::page]
 pub async fn page() -> ::topcoat::Result<()> {

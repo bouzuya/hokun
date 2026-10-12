@@ -1,10 +1,9 @@
 use topcoat::router::error::RouterErrorExt;
 
-::topcoat::router::module_param!(pub report_id: String, error = bad_request);
-
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
-    let report_id: &String = ::topcoat::router::path_param::<ReportId>(cx)?;
+    let report_id: &String =
+        ::topcoat::router::path_param::<crate::app::reports::report_id::ReportId>(cx)?;
     let report_id = report_id.to_string();
 
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
@@ -31,8 +30,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
                 <p>
                     <a
-                        href=(::topcoat::router::href!(crate::app::page).query(
-                            crate::app::QueryParams { date: Some(date.clone()) },
+                        href=(::topcoat::router::href!(crate::app::reports::page).query(
+                            crate::app::reports::QueryParams { date: Some(date.clone()) },
                         ))
                     >
                         "もどる"
