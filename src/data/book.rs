@@ -4,15 +4,15 @@ impl Books {
     pub fn dummy() -> Self {
         let books = vec![
             Book {
-                id: "kokugo".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 name: "こくご".to_string(),
             },
             Book {
-                id: "sansuu".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 name: "さんすう".to_string(),
             },
             Book {
-                id: "eigo".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 name: "えいご".to_string(),
             },
         ];

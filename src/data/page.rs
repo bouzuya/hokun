@@ -8,19 +8,14 @@ impl Pages {
 
         let pages = {
             let mut pages = vec![];
-            for page_id in 1..=30 {
-                pages.push(Page {
-                    book_id: books_vec[0].id.clone(),
-                    id: page_id.to_string(),
-                    name: page_id.to_string(),
-                });
-            }
-            for page_id in 1..=40 {
-                pages.push(Page {
-                    book_id: books_vec[1].id.clone(),
-                    id: page_id.to_string(),
-                    name: page_id.to_string(),
-                });
+            for book in books_vec {
+                for page_name in 1..=30 {
+                    pages.push(Page {
+                        book_id: book.id.clone(),
+                        id: uuid::Uuid::new_v4().to_string(),
+                        name: page_name.to_string(),
+                    });
+                }
             }
             pages
         };

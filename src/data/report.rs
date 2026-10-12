@@ -14,7 +14,7 @@ impl Reports {
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[1].id.clone();
             reports.create(Report {
-                id: "r123".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 book_id,
                 date: "2026-10-01".to_string(),
                 page_id,
@@ -25,7 +25,7 @@ impl Reports {
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[2].id.clone();
             reports.create(Report {
-                id: "r456".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 book_id,
                 date: "2026-10-01".to_string(),
                 page_id,
@@ -36,7 +36,7 @@ impl Reports {
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[3].id.clone();
             reports.create(Report {
-                id: "r789".to_string(),
+                id: uuid::Uuid::new_v4().to_string(),
                 book_id,
                 date: "2026-10-02".to_string(),
                 page_id,
