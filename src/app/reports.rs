@@ -63,6 +63,19 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             </head>
             <body>
                 <h1>"ほうこくくん"</h1>
+
+                <p>
+                    <a
+                        href=(::topcoat::router::href!(crate::app::reports::new::page).query(
+                            crate::app::reports::new::QueryParams {
+                                date: date.map(|it| it.to_string()),
+                            },
+                        ))
+                    >
+                        "あたらしい ほうこく"
+                    </a>
+                </p>
+
                 <p>"2026-10"</p>
                 <table>
                     <tr>
@@ -122,34 +135,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 </table>
                 match date {
                     None => {
-                        <p>
-                            <a
-                                href=(::topcoat::router::href!(
-                                    crate::app::reports::new::page,
-                                ).query(
-                                    crate::app::reports::new::QueryParams {
-                                        date: "2026-10-12".to_string(),
-                                    },
-                                ))
-                            >
-                                "あたらしい ほうこく"
-                            </a>
-                        </p>
+                        // do nothing
+
                     }
                     Some(date) => {
-                        <p>
-                            <a
-                                href=(::topcoat::router::href!(
-                                    crate::app::reports::new::page,
-                                ).query(
-                                    crate::app::reports::new::QueryParams {
-                                        date: date.to_string(),
-                                    },
-                                ))
-                            >
-                                "あたらしい ほうこく"
-                            </a>
-                        </p>
                         (date)
                         <ul>
                             for report in &reports_by_date {

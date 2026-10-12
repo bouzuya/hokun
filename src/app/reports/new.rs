@@ -1,7 +1,7 @@
 #[::topcoat::router::query_params(error = bad_request)]
 #[derive(serde::Serialize)]
 pub struct QueryParams {
-    pub date: String,
+    pub date: Option<String>,
 }
 
 #[::topcoat::router::page]
@@ -14,6 +14,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     // FIXME
     let book_pages = pages.find_by_book_id(&books[0].id);
 
+    let date = date
+        .as_deref()
+        .map(|it| it.to_string())
+        .unwrap_or_else(|| ::chrono::Local::now().format("%Y-%m-%d").to_string());
     let date = if date.chars().all(|c| c.is_ascii_digit() || c == '-') {
         Ok(date)
     } else {
@@ -35,11 +39,14 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a>
                 </p>
 
-                <form action=(::topcoat::router::href!(crate::app::reports::page)) method="post">
+                <form
+                    action=(::topcoat::router::href!(crate::app::reports::page))
+                    method="post"
+                >
                     <div>
                         <label>
                             "ひづけ"
-                            <span>(date)</span>
+                            <span>(date.clone())</span>
                             <input type="hidden" name="date" value=(date) />
                         </label>
                     </div>
