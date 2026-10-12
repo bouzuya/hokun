@@ -1,5 +1,6 @@
 use topcoat::runtime::internal::serde;
 
+mod edit;
 mod new;
 
 pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
@@ -123,13 +124,13 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                         (date)
                         <ul>
                             <li>
-                                <a href="/edit?id=123">
+                                <a href="/edit/123">
                                     <span>"さんすう"</span>
                                     <span>"27"</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="/edit?id=456">
+                                <a href="/edit/456">
                                     <span>"こくご"</span>
                                     <span>"36"</span>
                                 </a>
