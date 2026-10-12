@@ -48,8 +48,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
         })
         .flatten();
 
-    let reports_by_date = match date {
-        None => Vec::new(),
+    let filtered_reports = match date {
+        None => reports.find_by_month(::chrono::Local::now().format("%Y-%m").to_string()),
         Some(date) => reports.find_by_date(date),
     };
 
@@ -140,13 +140,13 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     }
                     Some(date) => {
                         (date)
-                        <ul>
-                            for report in &reports_by_date {
-                                <li>report_link(report: report)</li>
-                            }
-                        </ul>
                     }
                 }
+                <ul>
+                    for report in &filtered_reports {
+                        <li>report_link(report: report, show_date: date.is_none())</li>
+                    }
+                </ul>
             </body>
         </html>
     })
@@ -156,6 +156,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 pub async fn report_link(
     cx: &::topcoat::context::Cx,
     report: &crate::data::Report,
+    show_date: bool,
 ) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let books = ::topcoat::context::app_context::<crate::data::Books>(cx);
     let pages = ::topcoat::context::app_context::<crate::data::Pages>(cx);
@@ -173,6 +174,9 @@ pub async fn report_link(
                 crate::app::reports::report_id::ReportId(report.id.clone()),
             ))
         >
+            if show_date {
+                <span>(report.date.clone())</span>
+            }
             <span>(book_name)</span>
             <span>(book_page_name)</span>
         </a>

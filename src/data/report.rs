@@ -62,6 +62,16 @@ impl Reports {
     pub fn find_by_id(&self, id: &str) -> Option<Report> {
         self.0.lock().unwrap().iter().cloned().find(|r| r.id == id)
     }
+
+    pub fn find_by_month(&self, month: String) -> Vec<Report> {
+        self.0
+            .lock()
+            .unwrap()
+            .iter()
+            .cloned()
+            .filter(|r| r.date.starts_with(&month))
+            .collect()
+    }
 }
 
 #[derive(Clone)]
