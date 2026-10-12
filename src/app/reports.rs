@@ -1,6 +1,30 @@
 pub mod new;
 pub mod report_id;
 
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct FormParams {
+    pub book_id: String,
+    pub date: String,
+    pub page_id: String,
+}
+
+#[::topcoat::router::route(POST)]
+pub async fn create(
+    cx: &::topcoat::context::Cx,
+    ::topcoat::router::content::Form(form): ::topcoat::router::content::Form<FormParams>,
+) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
+    let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
+
+    reports.create(crate::data::Report {
+        book_id: form.book_id.clone(),
+        date: form.date.clone(),
+        id: uuid::Uuid::new_v4().to_string(),
+        page_id: form.page_id.clone(),
+    });
+
+    Ok(::topcoat::router::error::see_other("/reports"))
+}
+
 #[::topcoat::router::query_params(error = bad_request)]
 #[derive(serde::Serialize)]
 pub struct QueryParams {
@@ -150,9 +174,8 @@ pub async fn report_link(
     let book_name = books.find_by_id(&report.book_id).unwrap().name.clone();
     let book_page_name = pages
         .find_by_id(&report.book_id, &report.page_id)
-        .unwrap()
-        .name
-        .clone();
+        .map(|it| it.name.clone())
+        .unwrap_or_default();
 
     Ok(::topcoat::view::view! {
         <a
