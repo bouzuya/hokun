@@ -39,14 +39,21 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 ).resolve(cx))
                 method="post"
             >
-                <input name="_method" type="hidden" value="put" />
-                <input name="report_id" type="hidden" value=(report_id) />
+                crate::components::input::input(
+                    attrs: ::topcoat::view::attributes! { name="_method" type="hidden" value="put" }
+                )
+
+                crate::components::input::input(
+                    attrs: ::topcoat::view::attributes! { name="report_id" type="hidden" value=(report_id) }
+                )
 
                 <div>
                     <label>
                         "ひづけ"
                         <span>(date.clone())</span>
-                        <input type="hidden" name="date" value=(date) />
+                        crate::components::input::input(
+                            attrs: ::topcoat::view::attributes! { name="date" type="hidden" value=(date) }
+                        )
                     </label>
                 </div>
 
