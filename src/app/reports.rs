@@ -17,6 +17,8 @@ pub async fn create(
 ) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
     let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
 
+    // FIXME: validate form
+
     reports.create(crate::data::Report {
         book_id: form.book_id.clone(),
         date: form.date.clone(),
@@ -157,6 +159,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 match date {
                     None => {
                         // do nothing
+
 
                     }
                     Some(date) => {

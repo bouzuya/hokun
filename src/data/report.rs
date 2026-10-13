@@ -72,6 +72,13 @@ impl Reports {
             .filter(|r| r.date.starts_with(&month))
             .collect()
     }
+
+    pub fn update(&self, report: Report) {
+        let mut reports = self.0.lock().unwrap();
+        if let Some(existing) = reports.iter_mut().find(|r| r.id == report.id) {
+            *existing = report;
+        }
+    }
 }
 
 #[derive(Clone)]

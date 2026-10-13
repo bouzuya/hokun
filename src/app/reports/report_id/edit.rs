@@ -38,8 +38,15 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     </a>
                 </p>
 
-                <form action=(format!("/{}", report_id)) method="post">
-                    <input type="hidden" name="report_id" value=(report_id) />
+                <form
+                    action=(::topcoat::router::href!(
+                        crate::app::reports::report_id::update,
+                        crate::app::reports::report_id::ReportId(report_id.clone()),
+                    ).resolve(cx))
+                    method="post"
+                >
+                    <input name="_method" type="hidden" value="put" />
+                    <input name="report_id" type="hidden" value=(report_id) />
 
                     <div>
                         <label>
