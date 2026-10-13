@@ -25,57 +25,48 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     }?;
 
     Ok(::topcoat::view::view! {
-        <!DOCTYPE html>
-        <html lang="ja">
-            <head>
-                <meta charset="UTF-8" />
-                <title>"あたらしい ほうこく - ほうこくくん"</title>
-                ::topcoat::dev::script()
-            </head>
-            <body>
-                <h1>"あたらしい ほうこく"</h1>
+        crate::components::layout::layout(
+            title: "あたらしい ほうこく",
+            <h1>"あたらしい ほうこく"</h1>
 
-                <p>
-                    <a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a>
-                </p>
+            <p><a href=(::topcoat::router::href!(crate::app::page))>"もどる"</a></p>
 
-                <form
-                    action=(::topcoat::router::href!(crate::app::reports::page))
-                    method="post"
-                >
-                    <div>
-                        <label>
-                            "ひづけ"
-                            <span>(date.clone())</span>
-                            <input type="hidden" name="date" value=(date) />
-                        </label>
-                    </div>
+            <form
+                action=(::topcoat::router::href!(crate::app::reports::page))
+                method="post"
+            >
+                <div>
+                    <label>
+                        "ひづけ"
+                        <span>(date.clone())</span>
+                        <input type="hidden" name="date" value=(date) />
+                    </label>
+                </div>
 
-                    <div>
-                        <label>
-                            "ドリル"
-                            <select name="book_id">
-                                for book in books {
-                                    <option value=(&book.id)>(&book.name)</option>
-                                }
-                            </select>
-                        </label>
-                    </div>
+                <div>
+                    <label>
+                        "ドリル"
+                        <select name="book_id">
+                            for book in books {
+                                <option value=(&book.id)>(&book.name)</option>
+                            }
+                        </select>
+                    </label>
+                </div>
 
-                    <div>
-                        <label>
-                            "ページ"
-                            <select name="page_id">
-                                for page in book_pages {
-                                    <option value=(&page.id)>(&page.name)</option>
-                                }
-                            </select>
-                        </label>
-                    </div>
+                <div>
+                    <label>
+                        "ページ"
+                        <select name="page_id">
+                            for page in book_pages {
+                                <option value=(&page.id)>(&page.name)</option>
+                            }
+                        </select>
+                    </label>
+                </div>
 
-                    <button type="submit">"やったよ！"</button>
-                </form>
-            </body>
-        </html>
+                <button type="submit">"やったよ！"</button>
+            </form>
+        )
     })
 }

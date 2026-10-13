@@ -93,86 +93,78 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     }
 
     Ok(::topcoat::view::view! {
-        <!DOCTYPE html>
-        <html lang="ja">
-            <head>
-                <meta charset="UTF-8" />
-                <title>"ほうこくくん"</title>
-                ::topcoat::dev::script()
-            </head>
-            <body>
-                <h1>"ほうこくくん"</h1>
+        crate::components::layout::layout(
+            <h1>"ほうこくくん"</h1>
 
-                <p>
-                    <a
-                        href=(::topcoat::router::href!(crate::app::reports::new::page).query(
-                            crate::app::reports::new::QueryParams {
-                                date: date.map(|it| it.to_string()),
-                            },
-                        ))
-                    >
-                        "あたらしい ほうこく"
-                    </a>
-                </p>
+            <p>
+                <a
+                    href=(::topcoat::router::href!(crate::app::reports::new::page).query(
+                        crate::app::reports::new::QueryParams {
+                            date: date.map(|it| it.to_string()),
+                        },
+                    ))
+                >
+                    "あたらしい ほうこく"
+                </a>
+            </p>
 
-                let current_month = now.format("%Y-%m").to_string();
-                <p>(current_month)</p>
-                <table>
-                    <thead>
+            let current_month = now.format("%Y-%m").to_string();
+            <p>(current_month)</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>"月"</th>
+                        <th>"火"</th>
+                        <th>"水"</th>
+                        <th>"木"</th>
+                        <th>"金"</th>
+                        <th>"土"</th>
+                        <th>"日"</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    for week in weeks {
                         <tr>
-                            <th>"月"</th>
-                            <th>"火"</th>
-                            <th>"水"</th>
-                            <th>"木"</th>
-                            <th>"金"</th>
-                            <th>"土"</th>
-                            <th>"日"</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        for week in weeks {
-                            <tr>
-                                for d in week {
-                                    match d {
-                                        None => {
-                                            <td></td>
-                                        }
-                                        Some(d) => {
-                                            <td>
-                                                <a
-                                                    href=(::topcoat::router::href!(crate::app::reports::page).query(
-                                                        crate::app::reports::QueryParams {
-                                                            date: Some(d.format("%Y-%m-%d").to_string()),
-                                                        },
-                                                    ))
-                                                >
-                                                    (d.day())
-                                                </a>
-                                            </td>
-                                        }
+                            for d in week {
+                                match d {
+                                    None => {
+                                        <td></td>
+                                    }
+                                    Some(d) => {
+                                        <td>
+                                            <a
+                                                href=(::topcoat::router::href!(crate::app::reports::page).query(
+                                                    crate::app::reports::QueryParams {
+                                                        date: Some(d.format("%Y-%m-%d").to_string()),
+                                                    },
+                                                ))
+                                            >
+                                                (d.day())
+                                            </a>
+                                        </td>
                                     }
                                 }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                match date {
-                    None => {
-                        // do nothing
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            match date {
+                None => {
+                    // do nothing
 
 
-                    }
-                    Some(date) => {
-                        (date)
-                    }
                 }
-                <ul>
-                    for report in &filtered_reports {
-                        <li>report_link(report: report, show_date: date.is_none())</li>
-                    }
-                </ul>
-            </body>
-        </html>
+                Some(date) => {
+                    (date)
+                }
+            }
+            <ul>
+                for report in &filtered_reports {
+                    <li>report_link(report: report, show_date: date.is_none())</li>
+                }
+            </ul>
+        )
     })
 }
 

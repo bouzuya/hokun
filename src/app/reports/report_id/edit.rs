@@ -18,73 +18,66 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let page_id = report.page_id.clone();
 
     Ok(::topcoat::view::view! {
-        <!DOCTYPE html>
-        <html lang="ja">
-            <head>
-                <meta charset="UTF-8" />
-                <title>"ほうこく の へんしゅう - ほうこくくん"</title>
-                ::topcoat::dev::script()
-            </head>
-            <body>
-                <h1>"ほうこく の へんしゅう"</h1>
+        crate::components::layout::layout(
+            title: "ほうこく の へんしゅう",
+            <h1>"ほうこく の へんしゅう"</h1>
 
-                <p>
-                    <a
-                        href=(::topcoat::router::href!(crate::app::reports::page).query(
-                            crate::app::reports::QueryParams { date: Some(date.clone()) },
-                        ))
-                    >
-                        "もどる"
-                    </a>
-                </p>
-
-                <form
-                    action=(::topcoat::router::href!(
-                        crate::app::reports::report_id::update,
-                        crate::app::reports::report_id::ReportId(report_id.clone()),
-                    ).resolve(cx))
-                    method="post"
+            <p>
+                <a
+                    href=(::topcoat::router::href!(crate::app::reports::page).query(
+                        crate::app::reports::QueryParams { date: Some(date.clone()) },
+                    ))
                 >
-                    <input name="_method" type="hidden" value="put" />
-                    <input name="report_id" type="hidden" value=(report_id) />
+                    "もどる"
+                </a>
+            </p>
 
-                    <div>
-                        <label>
-                            "ひづけ"
-                            <span>(date.clone())</span>
-                            <input type="hidden" name="date" value=(date) />
-                        </label>
-                    </div>
+            <form
+                action=(::topcoat::router::href!(
+                    crate::app::reports::report_id::update,
+                    crate::app::reports::report_id::ReportId(report_id.clone()),
+                ).resolve(cx))
+                method="post"
+            >
+                <input name="_method" type="hidden" value="put" />
+                <input name="report_id" type="hidden" value=(report_id) />
 
-                    <div>
-                        <label>
-                            "ドリル"
-                            <select name="book_id">
-                                for book in books {
-                                    <option selected=(&book.id == &book_id) value=(&book.id)>
-                                        (&book.name)
-                                    </option>
-                                }
-                            </select>
-                        </label>
-                    </div>
+                <div>
+                    <label>
+                        "ひづけ"
+                        <span>(date.clone())</span>
+                        <input type="hidden" name="date" value=(date) />
+                    </label>
+                </div>
 
-                    <div>
-                        <label>
-                            "ページ"
-                            <select name="page_id">
-                                for page in book_pages {
-                                    <option selected=(&page.id == &page_id) value=(&page.id)>
-                                        (&page.name)
-                                    </option>
-                                }
-                            </select>
-                        </label>
-                    </div>
+                <div>
+                    <label>
+                        "ドリル"
+                        <select name="book_id">
+                            for book in books {
+                                <option selected=(&book.id == &book_id) value=(&book.id)>
+                                    (&book.name)
+                                </option>
+                            }
+                        </select>
+                    </label>
+                </div>
 
-                    <button type="submit">"やったよ！"</button>
-                </form>
-            </body>
-        </html>
+                <div>
+                    <label>
+                        "ページ"
+                        <select name="page_id">
+                            for page in book_pages {
+                                <option selected=(&page.id == &page_id) value=(&page.id)>
+                                    (&page.name)
+                                </option>
+                            }
+                        </select>
+                    </label>
+                </div>
+
+                <button type="submit">"やったよ！"</button>
+            </form>
+        )
     })
 }
