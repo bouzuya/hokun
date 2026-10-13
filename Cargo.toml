@@ -9,6 +9,7 @@ serde = { version = "1.0.229", features = ["derive"] }
 tokio = { version = "1.53.2", features = ["rt-multi-thread", "macros"] }
 topcoat = { version = "0.10.0", features = [
     "font-fontsource",
+    "icon-iconify",
     "tailwind",
     "ui",
 ] }
@@ -16,5 +17,6 @@ uuid = { version = "1.28.0", features = ["v4"] }
 
 [build-dependencies]
 topcoat = { version = "0.10.0", default-features = false, features = [
+    "icon-iconify",
     "tailwind",
 ] }

@@ -60,26 +60,28 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 <div>
                     <label>
                         "ドリル"
-                        <select name="book_id">
+                        crate::components::select::select(
+                            attrs: ::topcoat::view::attributes! { name="book_id" },
                             for book in books {
                                 <option selected=(&book.id == &book_id) value=(&book.id)>
                                     (&book.name)
                                 </option>
                             }
-                        </select>
+                        )
                     </label>
                 </div>
 
                 <div>
                     <label>
                         "ページ"
-                        <select name="page_id">
+                        crate::components::select::select(
+                            attrs: ::topcoat::view::attributes! { name="page_id" },
                             for page in book_pages {
                                 <option selected=(&page.id == &page_id) value=(&page.id)>
                                     (&page.name)
                                 </option>
                             }
-                        </select>
+                        )
                     </label>
                 </div>
 
