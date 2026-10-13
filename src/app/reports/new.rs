@@ -36,17 +36,17 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 method="post"
             >
                 <div>
-                    <label>
+                    crate::components::label::label(
                         "ひづけ"
                         <span>(date.clone())</span>
                         crate::components::input::input(
                             attrs: ::topcoat::view::attributes! { name="date" type="hidden" value=(date) }
                         )
-                    </label>
+                    )
                 </div>
 
                 <div>
-                    <label>
+                    crate::components::label::label(
                         "ドリル"
                         crate::components::select::select(
                             attrs: ::topcoat::view::attributes! { name="book_id" },
@@ -54,11 +54,11 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                 <option value=(&book.id)>(&book.name)</option>
                             }
                         )
-                    </label>
+                    )
                 </div>
 
                 <div>
-                    <label>
+                    crate::components::label::label(
                         "ページ"
                         crate::components::select::select(
                             attrs: ::topcoat::view::attributes! { name="page_id" },
@@ -66,7 +66,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                 <option value=(&page.id)>(&page.name)</option>
                             }
                         )
-                    </label>
+                    )
                 </div>
 
                 crate::components::button::button(

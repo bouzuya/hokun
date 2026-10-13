@@ -16,6 +16,10 @@ file = "src/components/button.rs"
 hash = "sha256:7fe8728a839a821af865711347189a00c29ba28b8b11dcc0d2ee06a053ca127c"
 file = "src/components/input.rs"
 
+[registries.topcoat.components.label]
+hash = "sha256:6741fe1cf51bea5cfe0d0c8d25548e452661d9017529a7163bc5b60ce725a8d5"
+file = "src/components/label.rs"
+
 [registries.topcoat.components.select]
 hash = "sha256:796d685bbefa46c8bb2d4f1404fbfbdaa1a61c0dc8260cceda7eed66b495413d"
 file = "src/components/select.rs"
