@@ -69,7 +69,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     </label>
                 </div>
 
-                <button type="submit">"やったよ！"</button>
+                crate::components::button::button(
+                    attrs: ::topcoat::view::attributes! { type="submit" },
+                    "やったよ！"
+                )
             </form>
         )
     })
