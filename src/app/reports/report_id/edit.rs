@@ -23,7 +23,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <h1>"ほうこく の へんしゅう"</h1>
 
             <p>
-                ::topcoat::runtime::link(
+                crate::components::a::a(
                     href: ::topcoat::router::href!(crate::app::reports::page).query(
                         crate::app::reports::QueryParams { date: Some(date.clone()) },
                     ),

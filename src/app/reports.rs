@@ -97,15 +97,14 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <h1>"ほうこくくん"</h1>
 
             <p>
-                <a
-                    href=(::topcoat::router::href!(crate::app::reports::new::page).query(
+                crate::components::a::a(
+                    href: ::topcoat::router::href!(crate::app::reports::new::page).query(
                         crate::app::reports::new::QueryParams {
                             date: date.map(|it| it.to_string()),
                         },
-                    ))
-                >
+                    ),
                     "あたらしい ほうこく"
-                </a>
+                )
             </p>
 
             let current_month = now.format("%Y-%m").to_string();
@@ -132,15 +131,14 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                     }
                                     Some(d) => {
                                         <td>
-                                            <a
-                                                href=(::topcoat::router::href!(crate::app::reports::page).query(
+                                            crate::components::a::a(
+                                                href: ::topcoat::router::href!(crate::app::reports::page).query(
                                                     crate::app::reports::QueryParams {
                                                         date: Some(d.format("%Y-%m-%d").to_string()),
                                                     },
-                                                ))
-                                            >
+                                                ),
                                                 (d.day())
-                                            </a>
+                                            )
                                         </td>
                                     }
                                 }
@@ -184,17 +182,16 @@ pub async fn report_link(
         .unwrap_or_default();
 
     Ok(::topcoat::view::view! {
-        <a
-            href=(::topcoat::router::href!(
+        crate::components::a::a(
+            href: ::topcoat::router::href!(
                 crate::app::reports::report_id::edit::page,
                 crate::app::reports::report_id::ReportId(report.id.clone()),
-            ))
-        >
+            ),
             if show_date {
                 <span>(report.date.clone())</span>
             }
             <span>(book_name)</span>
             <span>(book_page_name)</span>
-        </a>
+        )
     })
 }

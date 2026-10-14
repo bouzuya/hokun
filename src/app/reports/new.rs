@@ -30,7 +30,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <h1>"あたらしい ほうこく"</h1>
 
             <p>
-                ::topcoat::runtime::link(
+                crate::components::a::a(
                     href: ::topcoat::router::href!(crate::app::reports::page),
                     "もどる"
                 )
