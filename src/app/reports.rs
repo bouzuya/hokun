@@ -94,74 +94,76 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
     Ok(::topcoat::view::view! {
         crate::components::layout::layout(
-            <h1>"ほうこくくん"</h1>
+            <div class="flex flex-col gap-4">
+                <h1>"ほうこくくん"</h1>
 
-            <p>
-                crate::components::a::a(
-                    href: ::topcoat::router::href!(crate::app::reports::new::page).query(
-                        crate::app::reports::new::QueryParams {
-                            date: date.map(|it| it.to_string()),
-                        },
-                    ),
-                    "あたらしい ほうこく"
-                )
-            </p>
+                <p>
+                    crate::components::a::a(
+                        href: ::topcoat::router::href!(crate::app::reports::new::page).query(
+                            crate::app::reports::new::QueryParams {
+                                date: date.map(|it| it.to_string()),
+                            },
+                        ),
+                        "あたらしい ほうこく"
+                    )
+                </p>
 
-            let current_month = now.format("%Y-%m").to_string();
-            <p>(current_month)</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>"月"</th>
-                        <th>"火"</th>
-                        <th>"水"</th>
-                        <th>"木"</th>
-                        <th>"金"</th>
-                        <th>"土"</th>
-                        <th>"日"</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    for week in weeks {
+                let current_month = now.format("%Y-%m").to_string();
+                <p>(current_month)</p>
+                <table>
+                    <thead>
                         <tr>
-                            for d in week {
-                                match d {
-                                    None => {
-                                        <td></td>
-                                    }
-                                    Some(d) => {
-                                        <td>
-                                            crate::components::a::a(
-                                                href: ::topcoat::router::href!(crate::app::reports::page).query(
-                                                    crate::app::reports::QueryParams {
-                                                        date: Some(d.format("%Y-%m-%d").to_string()),
-                                                    },
-                                                ),
-                                                (d.day())
-                                            )
-                                        </td>
+                            <th>"月"</th>
+                            <th>"火"</th>
+                            <th>"水"</th>
+                            <th>"木"</th>
+                            <th>"金"</th>
+                            <th>"土"</th>
+                            <th>"日"</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        for week in weeks {
+                            <tr>
+                                for d in week {
+                                    match d {
+                                        None => {
+                                            <td></td>
+                                        }
+                                        Some(d) => {
+                                            <td>
+                                                crate::components::a::a(
+                                                    href: ::topcoat::router::href!(crate::app::reports::page).query(
+                                                        crate::app::reports::QueryParams {
+                                                            date: Some(d.format("%Y-%m-%d").to_string()),
+                                                        },
+                                                    ),
+                                                    (d.day())
+                                                )
+                                            </td>
+                                        }
                                     }
                                 }
-                            }
-                        </tr>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                match date {
+                    None => {
+                        // do nothing
+
+
                     }
-                </tbody>
-            </table>
-            match date {
-                None => {
-                    // do nothing
-
-
+                    Some(date) => {
+                        (date)
+                    }
                 }
-                Some(date) => {
-                    (date)
-                }
-            }
-            <ul>
-                for report in &filtered_reports {
-                    <li>report_link(report: report, show_date: date.is_none())</li>
-                }
-            </ul>
+                <ul>
+                    for report in &filtered_reports {
+                        <li>report_link(report: report, show_date: date.is_none())</li>
+                    }
+                </ul>
+            </div>
         )
     })
 }

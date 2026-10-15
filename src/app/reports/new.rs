@@ -27,58 +27,60 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     Ok(::topcoat::view::view! {
         crate::components::layout::layout(
             title: "あたらしい ほうこく",
-            <h1>"あたらしい ほうこく"</h1>
+            <div class="flex flex-col gap-4">
+                <h1>"あたらしい ほうこく"</h1>
 
-            <p>
-                crate::components::a::a(
-                    href: ::topcoat::router::href!(crate::app::reports::page),
-                    "もどる"
-                )
-            </p>
-
-            <form
-                action=(::topcoat::router::href!(crate::app::reports::page))
-                method="post"
-            >
-                <div>
-                    crate::components::label::label(
-                        "ひづけ"
-                        <span>(date.clone())</span>
-                        crate::components::input::input(
-                            attrs: ::topcoat::view::attributes! { name="date" type="hidden" value=(date) }
-                        )
+                <p>
+                    crate::components::a::a(
+                        href: ::topcoat::router::href!(crate::app::reports::page),
+                        "もどる"
                     )
-                </div>
+                </p>
 
-                <div>
-                    crate::components::label::label(
-                        "ドリル"
-                        crate::components::select::select(
-                            attrs: ::topcoat::view::attributes! { name="book_id" },
-                            for book in books {
-                                <option value=(&book.id)>(&book.name)</option>
-                            }
+                <form
+                    action=(::topcoat::router::href!(crate::app::reports::page))
+                    method="post"
+                >
+                    <div>
+                        crate::components::label::label(
+                            "ひづけ"
+                            <span>(date.clone())</span>
+                            crate::components::input::input(
+                                attrs: ::topcoat::view::attributes! { name="date" type="hidden" value=(date) }
+                            )
                         )
-                    )
-                </div>
+                    </div>
 
-                <div>
-                    crate::components::label::label(
-                        "ページ"
-                        crate::components::select::select(
-                            attrs: ::topcoat::view::attributes! { name="page_id" },
-                            for page in book_pages {
-                                <option value=(&page.id)>(&page.name)</option>
-                            }
+                    <div>
+                        crate::components::label::label(
+                            "ドリル"
+                            crate::components::select::select(
+                                attrs: ::topcoat::view::attributes! { name="book_id" },
+                                for book in books {
+                                    <option value=(&book.id)>(&book.name)</option>
+                                }
+                            )
                         )
-                    )
-                </div>
+                    </div>
 
-                crate::components::button::button(
-                    attrs: ::topcoat::view::attributes! { type="submit" },
-                    "やったよ！"
-                )
-            </form>
+                    <div>
+                        crate::components::label::label(
+                            "ページ"
+                            crate::components::select::select(
+                                attrs: ::topcoat::view::attributes! { name="page_id" },
+                                for page in book_pages {
+                                    <option value=(&page.id)>(&page.name)</option>
+                                }
+                            )
+                        )
+                    </div>
+
+                    crate::components::button::button(
+                        attrs: ::topcoat::view::attributes! { type="submit" },
+                        "やったよ！"
+                    )
+                </form>
+            </div>
         )
     })
 }

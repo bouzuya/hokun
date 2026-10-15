@@ -23,7 +23,7 @@ pub async fn layout(
                 <link rel="stylesheet" href=(::topcoat::tailwind::stylesheet!())>
                 ::topcoat::dev::script()
             </head>
-            <body>(child)</body>
+            <body class="p-4">(child)</body>
         </html>
     })
 }
