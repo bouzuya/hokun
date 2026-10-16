@@ -95,7 +95,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     Ok(::topcoat::view::view! {
         crate::components::layout::layout(
             <div class="flex flex-col gap-4">
-                <h1>"ほうこくくん"</h1>
+                <h1 class="text-2xl font-bold">"ほうこくくん"</h1>
 
                 <p>
                     crate::components::a::a(

@@ -21,7 +21,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
         crate::components::layout::layout(
             title: "ほうこく の へんしゅう",
             <div class="flex flex-col gap-4">
-                <h1>"ほうこく の へんしゅう"</h1>
+                <h1 class="text-2xl font-bold">"ほうこく の へんしゅう"</h1>
 
                 <p>
                     crate::components::a::a(
