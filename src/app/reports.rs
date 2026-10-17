@@ -177,7 +177,13 @@ pub async fn report_link(
     let books = ::topcoat::context::app_context::<crate::data::Books>(cx);
     let pages = ::topcoat::context::app_context::<crate::data::Pages>(cx);
 
-    let book_name = books.find_by_id(&report.book_id).unwrap().name.clone();
+    let book_name = books
+        .find_by_id(&report.book_id)
+        .await
+        .unwrap()
+        .unwrap()
+        .name
+        .clone();
     let book_page_name = pages
         .find_by_id(&report.book_id, &report.page_id)
         .map(|it| it.name.clone())

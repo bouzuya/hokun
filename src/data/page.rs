@@ -3,8 +3,8 @@ use crate::data::Books;
 pub struct Pages(Vec<Page>);
 
 impl Pages {
-    pub fn dummy(books: &Books) -> Self {
-        let books_vec = books.find_all();
+    pub async fn dummy(books: &Books) -> Result<Self, ::toasty::Error> {
+        let books_vec = books.find_all().await?;
 
         let pages = {
             let mut pages = vec![];
@@ -20,7 +20,7 @@ impl Pages {
             pages
         };
 
-        Self(pages)
+        Ok(Self(pages))
     }
 
     pub fn find_by_book_id(&self, book_id: &str) -> Vec<&Page> {

@@ -7,10 +7,10 @@ impl Reports {
         Self(std::sync::Arc::new(std::sync::Mutex::new(Vec::new())))
     }
 
-    pub fn dummy(books: &Books, pages: &Pages) -> Self {
+    pub async fn dummy(books: &Books, pages: &Pages) -> Result<Self, ::toasty::Error> {
         let reports = Self::new();
         {
-            let book_id = books.find_all()[0].id.clone();
+            let book_id = books.find_all().await?[0].id.clone();
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[1].id.clone();
             reports.create(Report {
@@ -21,7 +21,7 @@ impl Reports {
             });
         }
         {
-            let book_id = books.find_all()[1].id.clone();
+            let book_id = books.find_all().await?[1].id.clone();
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[2].id.clone();
             reports.create(Report {
@@ -32,7 +32,7 @@ impl Reports {
             });
         }
         {
-            let book_id = books.find_all()[1].id.clone();
+            let book_id = books.find_all().await?[1].id.clone();
             let book_pages = pages.find_by_book_id(&book_id);
             let page_id = book_pages[3].id.clone();
             reports.create(Report {
@@ -42,7 +42,7 @@ impl Reports {
                 page_id,
             });
         }
-        reports
+        Ok(reports)
     }
 
     pub fn create(&self, report: Report) {

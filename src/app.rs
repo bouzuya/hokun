@@ -4,13 +4,23 @@ use crate::data::Books;
 use crate::data::Pages;
 use crate::data::Reports;
 
-pub fn router() -> ::topcoat::Result<::topcoat::router::Router> {
+// FIXME: unwrap
+// FIXME: remove async
+pub async fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::asset::RouterBuilderAssetExt;
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
-    let books = Books::dummy();
-    let pages = Pages::dummy(&books);
-    let reports = Reports::dummy(&books, &pages);
+    let db = ::toasty::Db::builder()
+        .models(::toasty::models!(crate::data::Book))
+        .connect("sqlite::memory:")
+        .await
+        .unwrap();
+
+    db.push_schema().await.unwrap();
+
+    let books = Books::dummy(db).await.unwrap();
+    let pages = Pages::dummy(&books).await.unwrap();
+    let reports = Reports::dummy(&books, &pages).await.unwrap();
 
     Ok(::topcoat::router::module_router!()
         .discover()

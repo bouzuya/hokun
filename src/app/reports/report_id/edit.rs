@@ -7,7 +7,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let report_id = report_id.to_string();
 
     let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
-    let books = books.find_all();
+    let books = books.find_all().await?;
     let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
     let report = ::topcoat::context::app_context::<crate::app::Reports>(cx);
     let report = report.find_by_id(&report_id).ok_or_not_found()?;
