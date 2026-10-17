@@ -14,7 +14,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
     let date = report.date.clone();
     let book_id = report.book_id.clone();
-    let book_pages = pages.find_by_book_id(&book_id);
+    let book_pages = pages.find_by_book_id(&book_id).await?;
     let page_id = report.page_id.clone();
 
     Ok(::topcoat::view::view! {

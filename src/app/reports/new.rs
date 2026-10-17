@@ -12,7 +12,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
 
     // FIXME
-    let book_pages = pages.find_by_book_id(&books[0].id);
+    let book_pages = pages.find_by_book_id(&books[0].id).await?;
 
     let date = date
         .as_deref()

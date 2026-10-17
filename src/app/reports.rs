@@ -185,7 +185,8 @@ pub async fn report_link(
         .name
         .clone();
     let book_page_name = pages
-        .find_by_id(&report.book_id, &report.page_id)
+        .find_by_id(&report.page_id)
+        .await?
         .map(|it| it.name.clone())
         .unwrap_or_default();
 

@@ -11,15 +11,15 @@ pub async fn router() -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
 
     let db = ::toasty::Db::builder()
-        .models(::toasty::models!(crate::data::Book))
+        .models(::toasty::models!(crate::data::Book, crate::data::Page))
         .connect("sqlite::memory:")
         .await
         .unwrap();
 
     db.push_schema().await.unwrap();
 
-    let books = Books::dummy(db).await.unwrap();
-    let pages = Pages::dummy(&books).await.unwrap();
+    let books = Books::dummy(db.clone()).await.unwrap();
+    let pages = Pages::dummy(db, &books).await.unwrap();
     let reports = Reports::dummy(&books, &pages).await.unwrap();
 
     Ok(::topcoat::router::module_router!()

@@ -11,7 +11,7 @@ impl Reports {
         let reports = Self::new();
         {
             let book_id = books.find_all().await?[0].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id);
+            let book_pages = pages.find_by_book_id(&book_id).await?;
             let page_id = book_pages[1].id.clone();
             reports.create(Report {
                 id: uuid::Uuid::new_v4().to_string(),
@@ -22,7 +22,7 @@ impl Reports {
         }
         {
             let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id);
+            let book_pages = pages.find_by_book_id(&book_id).await?;
             let page_id = book_pages[2].id.clone();
             reports.create(Report {
                 id: uuid::Uuid::new_v4().to_string(),
@@ -33,7 +33,7 @@ impl Reports {
         }
         {
             let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id);
+            let book_pages = pages.find_by_book_id(&book_id).await?;
             let page_id = book_pages[3].id.clone();
             reports.create(Report {
                 id: uuid::Uuid::new_v4().to_string(),
