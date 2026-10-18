@@ -53,8 +53,12 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
         .flatten();
 
     let filtered_reports = match date {
-        None => reports.find_by_month(::chrono::Local::now().format("%Y-%m").to_string()),
-        Some(date) => reports.find_by_date(date),
+        None => {
+            reports
+                .find_by_month(::chrono::Local::now().format("%Y-%m").to_string())
+                .await?
+        }
+        Some(date) => reports.find_by_date(date).await?,
     };
 
     let now = ::chrono::Local::now();
