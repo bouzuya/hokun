@@ -14,10 +14,6 @@ pub struct Reports {
 }
 
 impl Reports {
-    pub fn new(db: ::toasty::Db) -> Self {
-        Self { db }
-    }
-
     pub async fn dummy(
         mut db: ::toasty::Db,
         books: &Books,
@@ -63,7 +59,7 @@ impl Reports {
         Ok(Self { db })
     }
 
-    pub async fn create(&self, report: Report) {
+    pub async fn create(&self, report: Report) -> Result<(), ::toasty::Error> {
         let mut db = self.db.clone();
         Report::create()
             .id(report.id)
@@ -71,8 +67,8 @@ impl Reports {
             .date(report.date)
             .page_id(report.page_id)
             .exec(&mut db)
-            .await
-            .unwrap();
+            .await?;
+        Ok(())
     }
 
     pub async fn find_by_date(&self, date: &str) -> Result<Vec<Report>, ::toasty::Error> {
