@@ -116,28 +116,26 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
                 let current_month = now.format("%Y-%m").to_string();
                 <p>(current_month)</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>"月"</th>
-                            <th>"火"</th>
-                            <th>"水"</th>
-                            <th>"木"</th>
-                            <th>"金"</th>
-                            <th>"土"</th>
-                            <th>"日"</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                crate::components::table::table(
+                    crate::components::table::table_header(
+                        crate::components::table::table_head("月")
+                        crate::components::table::table_head("火")
+                        crate::components::table::table_head("水")
+                        crate::components::table::table_head("木")
+                        crate::components::table::table_head("金")
+                        crate::components::table::table_head("土")
+                        crate::components::table::table_head("日")
+                    )
+                    crate::components::table::table_body(
                         for week in weeks {
-                            <tr>
+                            crate::components::table::table_row(
                                 for d in week {
                                     match d {
                                         None => {
-                                            <td></td>
+                                            crate::components::table::table_cell("")
                                         }
                                         Some(d) => {
-                                            <td>
+                                            crate::components::table::table_cell(
                                                 crate::components::a::a(
                                                     href: ::topcoat::router::href!(crate::app::reports::page).query(
                                                         crate::app::reports::QueryParams {
@@ -146,14 +144,14 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                                     ),
                                                     (d.day())
                                                 )
-                                            </td>
+                                            )
                                         }
                                     }
                                 }
-                            </tr>
+                            )
                         }
-                    </tbody>
-                </table>
+                    )
+                )
                 match date {
                     None => {
                         // do nothing

@@ -4,3 +4,4 @@ pub mod input;
 pub mod label;
 pub mod layout;
 pub mod select;
+pub mod table;
