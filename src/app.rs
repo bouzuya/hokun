@@ -4,34 +4,62 @@ use crate::data::Books;
 use crate::data::Pages;
 use crate::data::Reports;
 
-// FIXME: unwrap
-// FIXME: remove async
-pub async fn router() -> ::topcoat::Result<::topcoat::router::Router> {
+pub struct App {
+    books: Books,
+    pages: Pages,
+    reports: Reports,
+}
+
+impl App {
+    pub async fn dummy() -> ::topcoat::Result<Self> {
+        let db = ::toasty::Db::builder()
+            .models(::toasty::models!(
+                crate::data::Book,
+                crate::data::Page,
+                crate::data::Report
+            ))
+            .connect("sqlite::memory:")
+            .await
+            .unwrap();
+
+        db.push_schema().await.unwrap();
+
+        let books = Books::dummy(db.clone()).await.unwrap();
+        let pages = Pages::dummy(db.clone(), &books).await.unwrap();
+        let reports = Reports::dummy(db, &books, &pages).await.unwrap();
+
+        Ok(Self {
+            books,
+            pages,
+            reports,
+        })
+    }
+}
+
+fn app(cx: &::topcoat::context::Cx) -> &App {
+    ::topcoat::context::app_context::<App>(cx)
+}
+
+pub fn books(cx: &::topcoat::context::Cx) -> &Books {
+    &app(cx).books
+}
+
+pub fn pages(cx: &::topcoat::context::Cx) -> &Pages {
+    &app(cx).pages
+}
+
+pub fn reports(cx: &::topcoat::context::Cx) -> &Reports {
+    &app(cx).reports
+}
+
+pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::asset::RouterBuilderAssetExt;
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
-
-    let db = ::toasty::Db::builder()
-        .models(::toasty::models!(
-            crate::data::Book,
-            crate::data::Page,
-            crate::data::Report
-        ))
-        .connect("sqlite::memory:")
-        .await
-        .unwrap();
-
-    db.push_schema().await.unwrap();
-
-    let books = Books::dummy(db.clone()).await.unwrap();
-    let pages = Pages::dummy(db.clone(), &books).await.unwrap();
-    let reports = Reports::dummy(db, &books, &pages).await.unwrap();
 
     Ok(::topcoat::router::module_router!()
         .discover()
         .assets(::topcoat::asset::AssetBundle::load()?)
-        .app_context(books)
-        .app_context(pages)
-        .app_context(reports)
+        .app_context(app)
         .build())
 }
 

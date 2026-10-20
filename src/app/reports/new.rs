@@ -7,9 +7,9 @@ pub struct QueryParams {
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
-    let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
+    let books = crate::app::books(cx);
     let books = books.find_all().await?;
-    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
+    let pages = crate::app::pages(cx);
 
     // FIXME
     let book_pages = pages.find_by_book_id(&books[0].id).await?;

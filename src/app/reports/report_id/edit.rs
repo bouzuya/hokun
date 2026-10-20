@@ -6,11 +6,11 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
         ::topcoat::router::path_param::<crate::app::reports::report_id::ReportId>(cx)?;
     let report_id = report_id.to_string();
 
-    let books = &::topcoat::context::app_context::<crate::app::Books>(cx);
+    let books = crate::app::books(cx);
     let books = books.find_all().await?;
-    let pages = &::topcoat::context::app_context::<crate::app::Pages>(cx);
-    let report = ::topcoat::context::app_context::<crate::app::Reports>(cx);
-    let report = report.find_by_id(&report_id).await?.ok_or_not_found()?;
+    let pages = crate::app::pages(cx);
+    let reports = crate::app::reports(cx);
+    let report = reports.find_by_id(&report_id).await?.ok_or_not_found()?;
 
     let date = report.date.clone();
     let book_id = report.book_id.clone();

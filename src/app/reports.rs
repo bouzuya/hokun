@@ -15,7 +15,7 @@ pub async fn create(
     cx: &::topcoat::context::Cx,
     ::topcoat::router::content::Form(form): ::topcoat::router::content::Form<FormParams>,
 ) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
-    let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
+    let reports = crate::app::reports(cx);
 
     // FIXME: validate form
 
@@ -41,7 +41,7 @@ pub struct QueryParams {
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
 
-    let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
+    let reports = crate::app::reports(cx);
 
     let date = date
         .as_deref()
@@ -193,8 +193,8 @@ pub async fn report_link(
     report: &crate::data::Report,
     show_date: bool,
 ) -> ::topcoat::Result<impl ::topcoat::view::View> {
-    let books = ::topcoat::context::app_context::<crate::data::Books>(cx);
-    let pages = ::topcoat::context::app_context::<crate::data::Pages>(cx);
+    let books = crate::app::books(cx);
+    let pages = crate::app::pages(cx);
 
     let book_name = books
         .find_by_id(&report.book_id)

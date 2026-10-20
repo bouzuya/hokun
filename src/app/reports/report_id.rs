@@ -30,7 +30,7 @@ pub async fn update(
     }
 
     let report_id = ::topcoat::router::path_param::<crate::app::reports::report_id::ReportId>(cx)?;
-    let reports = ::topcoat::context::app_context::<crate::data::Reports>(cx);
+    let reports = crate::app::reports(cx);
 
     // FIXME: validate form
 
