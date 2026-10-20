@@ -3,11 +3,13 @@ mod reports;
 use crate::data::Books;
 use crate::data::Pages;
 use crate::data::Reports;
+use crate::data::Users;
 
 pub struct App {
     books: Books,
     pages: Pages,
     reports: Reports,
+    users: Users,
 }
 
 impl App {
@@ -16,7 +18,8 @@ impl App {
             .models(::toasty::models!(
                 crate::data::Book,
                 crate::data::Page,
-                crate::data::Report
+                crate::data::Report,
+                crate::data::User
             ))
             .connect("sqlite::memory:")
             .await
@@ -24,7 +27,8 @@ impl App {
 
         db.push_schema().await.unwrap();
 
-        let books = Books::dummy(db.clone()).await.unwrap();
+        let users = Users::dummy(db.clone()).await.unwrap();
+        let books = Books::dummy(db.clone(), &users).await.unwrap();
         let pages = Pages::dummy(db.clone(), &books).await.unwrap();
         let reports = Reports::dummy(db, &books, &pages).await.unwrap();
 
@@ -32,6 +36,7 @@ impl App {
             books,
             pages,
             reports,
+            users,
         })
     }
 }
@@ -50,6 +55,10 @@ pub fn pages(cx: &::topcoat::context::Cx) -> &Pages {
 
 pub fn reports(cx: &::topcoat::context::Cx) -> &Reports {
     &app(cx).reports
+}
+
+pub fn users(cx: &::topcoat::context::Cx) -> &Users {
+    &app(cx).users
 }
 
 pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {

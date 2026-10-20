@@ -1,8 +1,11 @@
+use crate::data::Users;
+
 #[derive(::toasty::Model)]
 #[key(id)]
 pub struct Book {
     pub id: String,
     pub name: String,
+    pub user_id: String,
 }
 
 pub struct Books {
@@ -10,25 +13,31 @@ pub struct Books {
 }
 
 impl Books {
-    pub async fn dummy(mut db: ::toasty::Db) -> Result<Self, ::toasty::Error> {
+    pub async fn dummy(mut db: ::toasty::Db, users: &Users) -> Result<Self, ::toasty::Error> {
+        let users = users.find_all().await?;
+        let user_id = users[0].id.clone();
         let books = vec![
             Book {
                 id: uuid::Uuid::new_v4().to_string(),
                 name: "こくご".to_string(),
+                user_id: user_id.clone(),
             },
             Book {
                 id: uuid::Uuid::new_v4().to_string(),
                 name: "さんすう".to_string(),
+                user_id: user_id.clone(),
             },
             Book {
                 id: uuid::Uuid::new_v4().to_string(),
                 name: "えいご".to_string(),
+                user_id: user_id.clone(),
             },
         ];
         for book in books {
             Book::create()
                 .id(book.id)
                 .name(book.name)
+                .user_id(book.user_id)
                 .exec(&mut db)
                 .await?;
         }
