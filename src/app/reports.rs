@@ -103,6 +103,21 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <div class="flex flex-col gap-4">
                 <h1 class="text-2xl font-bold">"ほうこくくん"</h1>
 
+                crate::components::breadcrumb::breadcrumb(
+                    crate::components::breadcrumb::breadcrumb_list(
+                        crate::components::breadcrumb::breadcrumb_item(
+                            crate::components::breadcrumb::breadcrumb_link(
+                                attrs: ::topcoat::view::attributes!(
+                                    {
+                                        href="/"
+                                    }
+                                ),
+                                "ほうこく の いちらん"
+                            )
+                        )
+                    )
+                )
+
                 <p>
                     crate::components::a::a(
                         href: ::topcoat::router::href!(crate::app::reports::new::page).query(

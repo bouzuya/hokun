@@ -5,3 +5,4 @@ pub mod label;
 pub mod layout;
 pub mod select;
 pub mod table;
+pub mod breadcrumb;
