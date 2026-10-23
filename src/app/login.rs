@@ -1,6 +1,12 @@
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct FormParams {
+    pub user_id: String,
+}
+
 #[::topcoat::router::route(POST)]
 pub async fn login(
     cx: &::topcoat::context::Cx,
+    ::topcoat::router::content::Form(_form): ::topcoat::router::content::Form<FormParams>,
 ) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
     let user = crate::app::verify_credentials(cx).await?;
 
@@ -27,7 +33,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     crate::components::select::select(
                         attrs: ::topcoat::view::attributes! { name="user_id" },
                         for user in &users {
-                            <option value=(user.id.clone())>(&user.id)</option>
+                            <option value=(user.id.clone())>(&user.name)</option>
                         }
                     )
                     crate::components::button::button(

@@ -2,6 +2,7 @@
 #[key(id)]
 pub struct User {
     pub id: String,
+    pub name: String,
 }
 
 pub struct Users {
@@ -13,16 +14,23 @@ impl Users {
         let users = vec![
             User {
                 id: uuid::Uuid::new_v4().to_string(),
+                name: "User 1".to_string(),
             },
             User {
                 id: uuid::Uuid::new_v4().to_string(),
+                name: "User 2".to_string(),
             },
             User {
                 id: uuid::Uuid::new_v4().to_string(),
+                name: "User 3".to_string(),
             },
         ];
         for user in users {
-            User::create().id(user.id).exec(&mut db).await?;
+            User::create()
+                .id(user.id)
+                .name(user.name)
+                .exec(&mut db)
+                .await?;
         }
         Ok(Self { db })
     }
