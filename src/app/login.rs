@@ -24,12 +24,16 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     action=(::topcoat::router::href!(crate::app::login::login))
                     method="post"
                 >
-                    <select>
+                    crate::components::select::select(
+                        attrs: ::topcoat::view::attributes! { name="user_id" },
                         for user in &users {
                             <option value=(user.id.clone())>(&user.id)</option>
                         }
-                    </select>
-                    <input type="submit" value="Login" />
+                    )
+                    crate::components::button::button(
+                        attrs: ::topcoat::view::attributes! { type="submit" },
+                        "ログイン"
+                    )
                 </form>
             </div>
         )
