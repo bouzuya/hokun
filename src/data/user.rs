@@ -10,29 +10,8 @@ pub struct Users {
 }
 
 impl Users {
-    pub async fn dummy(mut db: ::toasty::Db) -> Result<Self, ::toasty::Error> {
-        let users = vec![
-            User {
-                id: uuid::Uuid::new_v4().to_string(),
-                name: "User 1".to_string(),
-            },
-            User {
-                id: uuid::Uuid::new_v4().to_string(),
-                name: "User 2".to_string(),
-            },
-            User {
-                id: uuid::Uuid::new_v4().to_string(),
-                name: "User 3".to_string(),
-            },
-        ];
-        for user in users {
-            User::create()
-                .id(user.id)
-                .name(user.name)
-                .exec(&mut db)
-                .await?;
-        }
-        Ok(Self { db })
+    pub fn new(db: ::toasty::Db) -> Self {
+        Self { db }
     }
 
     pub async fn find_all(&self) -> Result<Vec<User>, ::toasty::Error> {

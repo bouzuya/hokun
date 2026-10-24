@@ -1,5 +1,3 @@
-use crate::data::{Books, Pages};
-
 #[derive(::toasty::Model)]
 #[key(id)]
 pub struct Report {
@@ -14,49 +12,8 @@ pub struct Reports {
 }
 
 impl Reports {
-    pub async fn dummy(
-        mut db: ::toasty::Db,
-        books: &Books,
-        pages: &Pages,
-    ) -> Result<Self, ::toasty::Error> {
-        {
-            let book_id = books.find_all().await?[0].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[1].id.clone();
-            Report::create()
-                .id(uuid::Uuid::new_v4().to_string())
-                .book_id(book_id)
-                .date("2026-10-01".to_string())
-                .page_id(page_id)
-                .exec(&mut db)
-                .await?;
-        }
-        {
-            let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[2].id.clone();
-            Report::create()
-                .id(uuid::Uuid::new_v4().to_string())
-                .book_id(book_id.clone())
-                .date("2026-10-01".to_string())
-                .page_id(page_id.clone())
-                .exec(&mut db)
-                .await?;
-        }
-        {
-            let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[3].id.clone();
-            Report::create()
-                .id(uuid::Uuid::new_v4().to_string())
-                .book_id(book_id)
-                .date("2026-10-02".to_string())
-                .page_id(page_id)
-                .exec(&mut db)
-                .await?;
-        }
-
-        Ok(Self { db })
+    pub fn new(db: ::toasty::Db) -> Self {
+        Self { db }
     }
 
     pub async fn create(&self, report: Report) -> Result<(), ::toasty::Error> {

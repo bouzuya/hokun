@@ -1,5 +1,3 @@
-use crate::data::Books;
-
 #[derive(::toasty::Model)]
 #[key(id)]
 pub struct Page {
@@ -13,21 +11,8 @@ pub struct Pages {
 }
 
 impl Pages {
-    pub async fn dummy(mut db: ::toasty::Db, books: &Books) -> Result<Self, ::toasty::Error> {
-        let books_vec = books.find_all().await?;
-
-        for book in books_vec {
-            for page_name in 1..=30 {
-                Page::create()
-                    .book_id(book.id.clone())
-                    .id(uuid::Uuid::new_v4().to_string())
-                    .name(page_name.to_string())
-                    .exec(&mut db)
-                    .await?;
-            }
-        }
-
-        Ok(Self { db })
+    pub fn new(db: ::toasty::Db) -> Self {
+        Self { db }
     }
 
     pub async fn find_by_book_id(&self, book_id: &str) -> Result<Vec<Page>, ::toasty::Error> {
