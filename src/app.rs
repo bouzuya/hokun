@@ -2,23 +2,19 @@ pub mod login;
 mod logout;
 pub mod reports;
 
+use std::ops::Deref;
+
 use crate::data::Books;
 use crate::data::Pages;
 use crate::data::Reports;
 use crate::data::User;
 use crate::data::Users;
 
-pub struct MySessionUserStore(
-    std::sync::Arc<
-        std::sync::Mutex<std::collections::HashMap<::topcoat::session::TokenHash, User>>,
-    >,
-);
-
 pub struct App {
     books: Books,
+    db: ::toasty::Db,
     pages: Pages,
     reports: Reports,
-    session_user_store: MySessionUserStore,
     users: Users,
 }
 
@@ -29,6 +25,7 @@ impl App {
                 crate::data::Book,
                 crate::data::Page,
                 crate::data::Report,
+                crate::data::Session,
                 crate::data::User
             ))
             .connect("sqlite::memory:")
@@ -40,15 +37,13 @@ impl App {
         let users = Users::dummy(db.clone()).await.unwrap();
         let books = Books::dummy(db.clone(), &users).await.unwrap();
         let pages = Pages::dummy(db.clone(), &books).await.unwrap();
-        let reports = Reports::dummy(db, &books, &pages).await.unwrap();
+        let reports = Reports::dummy(db.clone(), &books, &pages).await.unwrap();
 
         Ok(Self {
             books,
+            db,
             pages,
             reports,
-            session_user_store: MySessionUserStore(std::sync::Arc::new(std::sync::Mutex::new(
-                std::collections::HashMap::new(),
-            ))),
             users,
         })
     }
@@ -70,19 +65,15 @@ pub fn reports(cx: &::topcoat::context::Cx) -> &Reports {
     &app(cx).reports
 }
 
-pub fn session_user_store(cx: &::topcoat::context::Cx) -> &MySessionUserStore {
-    &app(cx).session_user_store
-}
-
 pub fn users(cx: &::topcoat::context::Cx) -> &Users {
     &app(cx).users
 }
 
 pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::asset::RouterBuilderAssetExt;
+    use ::topcoat::cookie::RouterBuilderCookieExt as _;
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
-    use topcoat::cookie::RouterBuilderCookieExt as _;
-    use topcoat::session::RouterBuilderSessionExt as _;
+    use ::topcoat::session::RouterBuilderSessionExt as _;
 
     Ok(::topcoat::router::module_router!()
         .cookies()
@@ -111,17 +102,27 @@ pub async fn load_session_user(
     cx: &::topcoat::context::Cx,
     hash: &::topcoat::session::TokenHash,
 ) -> ::topcoat::Result<Option<User>> {
-    let session_user_store = session_user_store(cx);
-    let session_user = session_user_store.0.lock().unwrap().get(hash).cloned();
-    Ok(session_user)
+    let mut db = app(cx).db.clone();
+    let session = match crate::data::Session::filter_by_id(::hex::encode(hash.deref()))
+        .exec(&mut db)
+        .await?
+        .into_iter()
+        .next()
+    {
+        None => return Ok(None),
+        Some(session) => session,
+    };
+
+    let user = crate::data::User::get_by_id(&mut db, session.user_id).await?;
+    Ok(Some(user))
 }
 
 pub async fn delete_session(
     cx: &::topcoat::context::Cx,
     hash: &::topcoat::session::TokenHash,
 ) -> ::topcoat::Result<()> {
-    let session_user_store = session_user_store(cx);
-    session_user_store.0.lock().unwrap().remove(hash);
+    let mut db = app(cx).db.clone();
+    crate::data::Session::delete_by_id(&mut db, ::hex::encode(hash.deref())).await?;
     Ok(())
 }
 
@@ -130,12 +131,12 @@ pub async fn persist_session(
     user: &User,
     session: &::topcoat::session::Session,
 ) -> ::topcoat::Result<()> {
-    let session_user_store = session_user_store(cx);
-    session_user_store
-        .0
-        .lock()
-        .unwrap()
-        .insert(session.token_hash.clone(), user.clone());
+    let mut db = app(cx).db.clone();
+    crate::data::Session::create()
+        .id(::hex::encode(session.token_hash.deref()))
+        .user_id(&user.id)
+        .exec(&mut db)
+        .await?;
     Ok(())
 }
 
