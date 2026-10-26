@@ -17,13 +17,15 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . ./
 RUN cargo build --release
+RUN topcoat asset bundle --bin server --release
 
 FROM debian:trixie-slim AS runtime
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=builder /app/target/release/hokun /app/hokun
+COPY --from=builder /app/target/release/server /app/hokun
+COPY --from=builder /app/target/release/assets /app/assets
 ENV HOST=0.0.0.0
 ENV PORT=3000
 EXPOSE 3000
