@@ -25,8 +25,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /app/toasty /app/toasty
-COPY --from=builder /app/target/release/db /app/db
-COPY --from=builder /app/target/release/server /app/hokun
+COPY --from=builder /app/target/release/hokun /app/hokun
 COPY --from=builder /app/target/release/assets /app/assets
 ENV HOST=0.0.0.0
 ENV PORT=3000
