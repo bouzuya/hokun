@@ -6,6 +6,16 @@ pub struct Book {
     pub user_id: String,
 }
 
+impl Book {
+    pub fn new(name: String, user_id: String) -> Self {
+        Self {
+            id: ::uuid::Uuid::new_v4().to_string(),
+            name,
+            user_id,
+        }
+    }
+}
+
 pub struct Books {
     db: ::toasty::Db,
 }

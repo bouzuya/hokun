@@ -5,6 +5,15 @@ pub struct User {
     pub name: String,
 }
 
+impl User {
+    pub fn new(name: String) -> Self {
+        Self {
+            id: ::uuid::Uuid::new_v4().to_string(),
+            name,
+        }
+    }
+}
+
 pub struct Users {
     db: ::toasty::Db,
 }

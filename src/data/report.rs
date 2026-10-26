@@ -7,6 +7,17 @@ pub struct Report {
     pub page_id: String,
 }
 
+impl Report {
+    pub fn new(book_id: String, date: String, page_id: String) -> Self {
+        Self {
+            book_id,
+            date,
+            id: ::uuid::Uuid::new_v4().to_string(),
+            page_id,
+        }
+    }
+}
+
 pub struct Reports {
     db: ::toasty::Db,
 }

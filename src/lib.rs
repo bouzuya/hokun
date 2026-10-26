@@ -40,18 +40,9 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
 
     {
         let users = vec![
-            User {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "User 1".to_string(),
-            },
-            User {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "User 2".to_string(),
-            },
-            User {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "User 3".to_string(),
-            },
+            User::new("User 1".to_string()),
+            User::new("User 2".to_string()),
+            User::new("User 3".to_string()),
         ];
         for user in users {
             User::create()
@@ -68,21 +59,9 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
         let users = users.find_all().await?;
         let user_id = users[0].id.clone();
         let books = vec![
-            Book {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "こくご".to_string(),
-                user_id: user_id.clone(),
-            },
-            Book {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "さんすう".to_string(),
-                user_id: user_id.clone(),
-            },
-            Book {
-                id: ::uuid::Uuid::new_v4().to_string(),
-                name: "えいご".to_string(),
-                user_id: user_id.clone(),
-            },
+            Book::new("こくご".to_string(), user_id.clone()),
+            Book::new("さんすう".to_string(), user_id.clone()),
+            Book::new("えいご".to_string(), user_id.clone()),
         ];
         for book in books {
             Book::create()
@@ -100,10 +79,11 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
 
         for book in books_vec {
             for page_name in 1..=30 {
+                let page = Page::new(book.id.clone(), page_name.to_string());
                 Page::create()
-                    .book_id(book.id.clone())
-                    .id(::uuid::Uuid::new_v4().to_string())
-                    .name(page_name.to_string())
+                    .book_id(page.book_id)
+                    .id(page.id)
+                    .name(page.name)
                     .exec(&mut db)
                     .await?;
             }
@@ -113,39 +93,32 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
     {
         use crate::data::Report;
 
-        {
-            let book_id = books.find_all().await?[0].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[1].id.clone();
+        let reports = [
+            {
+                let book_id = books.find_all().await?[0].id.clone();
+                let book_pages = pages.find_by_book_id(&book_id).await?;
+                let page_id = book_pages[1].id.clone();
+                Report::new(book_id, "2026-10-01".to_string(), page_id)
+            },
+            {
+                let book_id = books.find_all().await?[1].id.clone();
+                let book_pages = pages.find_by_book_id(&book_id).await?;
+                let page_id = book_pages[2].id.clone();
+                Report::new(book_id, "2026-10-01".to_string(), page_id)
+            },
+            {
+                let book_id = books.find_all().await?[1].id.clone();
+                let book_pages = pages.find_by_book_id(&book_id).await?;
+                let page_id = book_pages[3].id.clone();
+                Report::new(book_id, "2026-10-02".to_string(), page_id)
+            },
+        ];
+        for report in reports {
             Report::create()
-                .id(::uuid::Uuid::new_v4().to_string())
-                .book_id(book_id)
-                .date("2026-10-01".to_string())
-                .page_id(page_id)
-                .exec(&mut db)
-                .await?;
-        }
-        {
-            let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[2].id.clone();
-            Report::create()
-                .id(::uuid::Uuid::new_v4().to_string())
-                .book_id(book_id.clone())
-                .date("2026-10-01".to_string())
-                .page_id(page_id.clone())
-                .exec(&mut db)
-                .await?;
-        }
-        {
-            let book_id = books.find_all().await?[1].id.clone();
-            let book_pages = pages.find_by_book_id(&book_id).await?;
-            let page_id = book_pages[3].id.clone();
-            Report::create()
-                .id(::uuid::Uuid::new_v4().to_string())
-                .book_id(book_id)
-                .date("2026-10-02".to_string())
-                .page_id(page_id)
+                .id(report.id)
+                .book_id(report.book_id)
+                .date(report.date)
+                .page_id(report.page_id)
                 .exec(&mut db)
                 .await?;
         }
