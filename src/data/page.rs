@@ -34,7 +34,10 @@ impl Pages {
 
     pub async fn find_by_id(&self, id: &str) -> Result<Option<Page>, ::toasty::Error> {
         let mut db = self.db.clone();
-        // FIXME: handle not found error
-        Page::get_by_id(&mut db, id).await.map(Some)
+        Ok(Page::filter_by_id(id)
+            .exec(&mut db)
+            .await?
+            .into_iter()
+            .next())
     }
 }
