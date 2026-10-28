@@ -135,9 +135,18 @@ struct Cli {
 
 #[derive(::clap::Subcommand)]
 enum Command {
+    CreateBook(CreateBookArgs),
     CreateUser(CreateUserArgs),
     Migration(::toasty_cli::MigrationCommand),
     Serve,
+}
+
+#[derive(::clap::Args)]
+struct CreateBookArgs {
+    #[arg(long)]
+    name: String,
+    #[arg(long)]
+    user_id: String,
 }
 
 #[derive(::clap::Args)]
@@ -152,6 +161,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let mut db = crate::setup_db().await?;
     match cli.command.unwrap_or(Command::Serve) {
+        Command::CreateBook(CreateBookArgs { name, user_id }) => {
+            crate::data::Book::create()
+                .id(::uuid::Uuid::new_v4().to_string())
+                .name(name)
+                .user_id(user_id)
+                .exec(&mut db)
+                .await?;
+        }
         Command::CreateUser(CreateUserArgs { name }) => {
             crate::data::User::create()
                 .id(::uuid::Uuid::new_v4().to_string())
