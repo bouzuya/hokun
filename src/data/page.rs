@@ -4,14 +4,16 @@ pub struct Page {
     pub book_id: String,
     pub id: String,
     pub name: String,
+    pub position: u16,
 }
 
 impl Page {
-    pub fn new(book_id: String, name: String) -> Self {
+    pub fn new(book_id: String, name: String, position: u16) -> Self {
         Self {
             book_id,
             id: ::uuid::Uuid::new_v4().to_string(),
             name,
+            position,
         }
     }
 }

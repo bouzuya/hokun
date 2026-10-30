@@ -77,13 +77,14 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
         use crate::data::Page;
         let books_vec = books.find_all().await?;
 
-        for book in books_vec {
+        for (index, book) in books_vec.into_iter().enumerate() {
             for page_name in 1..=30 {
-                let page = Page::new(book.id.clone(), page_name.to_string());
+                let page = Page::new(book.id.clone(), page_name.to_string(), (index + 1) as u16);
                 Page::create()
                     .book_id(page.book_id)
                     .id(page.id)
                     .name(page.name)
+                    .position(page.position)
                     .exec(&mut db)
                     .await?;
             }
@@ -156,6 +157,8 @@ struct CreatePageArgs {
     book_id: String,
     #[arg(long)]
     name: String,
+    #[arg(long)]
+    position: u16,
 }
 
 #[derive(::clap::Args)]
@@ -178,11 +181,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 .exec(&mut db)
                 .await?;
         }
-        Command::CreatePage(CreatePageArgs { book_id, name }) => {
+        Command::CreatePage(CreatePageArgs {
+            book_id,
+            name,
+            position,
+        }) => {
             crate::data::Page::create()
                 .book_id(book_id)
                 .id(::uuid::Uuid::new_v4().to_string())
                 .name(name)
+                .position(position)
                 .exec(&mut db)
                 .await?;
         }
