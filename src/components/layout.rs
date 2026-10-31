@@ -22,6 +22,7 @@ pub async fn layout(
                 )
                 <link rel="stylesheet" href=(::topcoat::tailwind::stylesheet!())>
                 ::topcoat::dev::script()
+                ::topcoat::runtime::script()
             </head>
             <body class="p-4">(child)</body>
         </html>

@@ -44,6 +44,7 @@ pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::asset::RouterBuilderAssetExt;
     use ::topcoat::cookie::RouterBuilderCookieExt as _;
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
+    use ::topcoat::runtime::RouterBuilderRuntimeExt as _;
     use ::topcoat::session::RouterBuilderSessionExt as _;
 
     Ok(::topcoat::router::module_router!()
@@ -52,6 +53,7 @@ pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
         .discover()
         .assets(::topcoat::asset::AssetBundle::load()?)
         .app_context(app)
+        .runtime()
         .build())
 }
 

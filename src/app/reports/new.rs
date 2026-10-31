@@ -11,9 +11,6 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let books = books.find_all().await?;
     let pages = crate::app::pages(cx);
 
-    // FIXME
-    let book_pages = pages.find_by_book_id(&books[0].id).await?;
-
     let date = date
         .as_deref()
         .map(|it| it.to_string())
@@ -23,6 +20,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     } else {
         Err(::topcoat::router::error::bad_request("Invalid date format"))
     }?;
+
+    let selected_book_id = ::topcoat::runtime::signal(cx, || books[0].id.clone());
 
     Ok(::topcoat::view::view! {
         crate::components::layout::layout(
@@ -74,9 +73,13 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                         crate::components::label::label(
                             "ドリル"
                             crate::components::select::select(
-                                attrs: ::topcoat::view::attributes! { name="book_id" },
+                                attrs: ::topcoat::view::attributes! {
+                                    name="book_id"
+                                    @change=$(|e: ::topcoat::runtime::Event|
+                                        selected_book_id.set(e.target.value))
+                                },
                                 for book in books {
-                                    <option value=(&book.id)>(&book.name)</option>
+                                    <option selected=(selected_book_id.get() == book.id) value=(&book.id)>(&book.name)</option>
                                 }
                             )
                         )
@@ -85,12 +88,7 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <div>
                         crate::components::label::label(
                             "ページ"
-                            crate::components::select::select(
-                                attrs: ::topcoat::view::attributes! { name="page_id" },
-                                for page in book_pages {
-                                    <option value=(&page.id)>(&page.name)</option>
-                                }
-                            )
+                            book_page_select(book_id: selected_book_id.get())
                         )
                     </div>
 
@@ -100,6 +98,23 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     )
                 </form>
             </div>
+        )
+    })
+}
+
+#[::topcoat::view::component]
+async fn book_page_select(
+    cx: &::topcoat::context::Cx,
+    book_id: String,
+) -> ::topcoat::Result<impl ::topcoat::view::View> {
+    let pages = crate::app::pages(cx);
+    let book_pages = pages.find_by_book_id(&book_id).await?;
+    Ok(::topcoat::view::view! {
+        crate::components::select::select(
+            attrs: ::topcoat::view::attributes! { name="page_id" },
+            for p in book_pages {
+                <option value=(&p.id)>(&p.name)</option>
+            }
         )
     })
 }
