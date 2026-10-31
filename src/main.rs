@@ -139,6 +139,7 @@ enum Command {
     CreateBook(CreateBookArgs),
     CreatePage(CreatePageArgs),
     CreateUser(CreateUserArgs),
+    Migrate,
     Migration(::toasty_cli::MigrationCommand),
     Serve,
 }
@@ -200,6 +201,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 .name(name)
                 .exec(&mut db)
                 .await?;
+        }
+        Command::Migrate => {
+            let db = crate::setup_db().await?;
+            let migrations = ::toasty::embed_migrations!();
+            migrations.apply(&db).await?;
         }
         Command::Migration(_) => {
             let args = std::env::args();
