@@ -108,7 +108,8 @@ async fn book_page_select(
     book_id: String,
 ) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let pages = crate::app::pages(cx);
-    let book_pages = pages.find_by_book_id(&book_id).await?;
+    let mut book_pages = pages.find_by_book_id(&book_id).await?;
+    book_pages.sort_by_key(|it| it.position);
     Ok(::topcoat::view::view! {
         crate::components::select::select(
             attrs: ::topcoat::view::attributes! { name="page_id" },
