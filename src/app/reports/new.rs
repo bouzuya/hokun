@@ -9,7 +9,6 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
     let books = crate::app::books(cx);
     let books = books.find_all().await?;
-    let pages = crate::app::pages(cx);
 
     let date = date
         .as_deref()
