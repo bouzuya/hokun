@@ -62,6 +62,13 @@ impl Reports {
             .await
     }
 
+    pub async fn filter_by_book(&self, book_id: &str) -> Result<Vec<Report>, ::toasty::Error> {
+        let mut db = self.db.clone();
+        Report::filter(Report::fields().book_id().eq(book_id))
+            .exec(&mut db)
+            .await
+    }
+
     pub async fn update(&self, mut report: Report) -> Result<(), ::toasty::Error> {
         let mut db = self.db.clone();
         report.update().exec(&mut db).await
