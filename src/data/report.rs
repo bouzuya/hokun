@@ -1,6 +1,8 @@
 #[derive(::toasty::Model)]
 #[key(id)]
 pub struct Report {
+    #[belongs_to(key = book_id, references = id)]
+    book: ::toasty::Deferred<crate::data::book::Book>,
     pub book_id: String,
     pub date: String,
     pub id: String,
@@ -10,6 +12,7 @@ pub struct Report {
 impl Report {
     pub fn new(book_id: String, date: String, page_id: String) -> Self {
         Self {
+            book: ::toasty::Deferred::default(),
             book_id,
             date,
             id: ::uuid::Uuid::new_v4().to_string(),

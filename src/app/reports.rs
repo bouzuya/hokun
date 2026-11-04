@@ -20,12 +20,11 @@ pub async fn create(
     // FIXME: validate form
 
     reports
-        .create(crate::data::Report {
-            book_id: form.book_id.clone(),
-            date: form.date.clone(),
-            id: ::uuid::Uuid::new_v4().to_string(),
-            page_id: form.page_id.clone(),
-        })
+        .create(crate::data::Report::new(
+            form.book_id.clone(),
+            form.date.clone(),
+            form.page_id.clone(),
+        ))
         .await?;
 
     Ok(::topcoat::router::error::see_other("/reports"))
