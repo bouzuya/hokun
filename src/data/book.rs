@@ -1,4 +1,4 @@
-#[derive(::toasty::Model)]
+#[derive(Debug, ::toasty::Model)]
 #[key(id)]
 pub struct Book {
     pub id: String,

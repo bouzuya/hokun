@@ -108,13 +108,25 @@ async fn book_page_select(
 ) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let pages = crate::app::pages(cx);
     let reports = crate::app::reports(cx);
+    let last_report_position = reports
+        .find_last_by_book(&book_id)
+        .await?
+        .map(|it| it.page.get().position);
     let mut book_pages = pages.find_by_book_id(&book_id).await?;
     book_pages.sort_by_key(|it| it.position);
+    let next_page_id = match last_report_position {
+        None => book_pages.iter().next(),
+        Some(last_report_position) => book_pages
+            .iter()
+            .skip_while(|it| it.position <= last_report_position)
+            .next(),
+    }
+    .map(|it| it.id.clone());
     Ok(::topcoat::view::view! {
         crate::components::select::select(
             attrs: ::topcoat::view::attributes! { name="page_id" },
             for p in book_pages {
-                <option value=(&p.id)>(&p.name)</option>
+                <option selected=(next_page_id.clone().map(|it| it == p.id).unwrap_or(false)) value=(&p.id)>(&p.name)</option>
             }
         )
     })

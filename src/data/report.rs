@@ -1,21 +1,21 @@
-#[derive(::toasty::Model)]
+#[derive(Debug, ::toasty::Model)]
 #[key(id)]
 pub struct Report {
-    #[belongs_to(key = book_id, references = id)]
-    book: ::toasty::Deferred<crate::data::book::Book>,
     pub book_id: String,
     pub date: String,
     pub id: String,
+    #[belongs_to(key = page_id, references = id)]
+    pub page: ::toasty::Deferred<crate::data::Page>,
     pub page_id: String,
 }
 
 impl Report {
     pub fn new(book_id: String, date: String, page_id: String) -> Self {
         Self {
-            book: ::toasty::Deferred::default(),
             book_id,
             date,
             id: ::uuid::Uuid::new_v4().to_string(),
+            page: ::toasty::Deferred::default(),
             page_id,
         }
     }
@@ -65,11 +65,26 @@ impl Reports {
             .await
     }
 
-    pub async fn filter_by_book(&self, book_id: &str) -> Result<Vec<Report>, ::toasty::Error> {
+    pub async fn find_last_by_book(
+        &self,
+        book_id: &str,
+    ) -> Result<Option<Report>, ::toasty::Error> {
         let mut db = self.db.clone();
-        Report::filter(Report::fields().book_id().eq(book_id))
+        Ok(Report::filter(Report::fields().book_id().eq(book_id))
+            .include(Report::fields().page())
             .exec(&mut db)
-            .await
+            .await?
+            .into_iter()
+            .fold(None, |acc, it| match acc {
+                Some(last) => {
+                    if it.page.get().position > last.page.get().position {
+                        Some(it)
+                    } else {
+                        Some(last)
+                    }
+                }
+                None => Some(it),
+            }))
     }
 
     pub async fn update(&self, mut report: Report) -> Result<(), ::toasty::Error> {

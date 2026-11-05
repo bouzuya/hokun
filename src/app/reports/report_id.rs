@@ -33,14 +33,13 @@ pub async fn update(
     let reports = crate::app::reports(cx);
 
     // FIXME: validate form
-
-    reports
-        .update(crate::data::Report::new(
-            form.book_id.clone(),
-            form.date.clone(),
-            form.page_id.clone(),
-        ))
-        .await?;
+    let mut report = crate::data::Report::new(
+        form.book_id.clone(),
+        form.date.clone(),
+        form.page_id.clone(),
+    );
+    report.id = report_id.to_string();
+    reports.update(report).await?;
 
     Ok(::topcoat::router::error::see_other(
         ::topcoat::router::href!(crate::app::reports::page)
