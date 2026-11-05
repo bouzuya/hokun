@@ -77,9 +77,9 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
         use crate::data::Page;
         let books_vec = books.find_all().await?;
 
-        for (index, book) in books_vec.into_iter().enumerate() {
+        for book in books_vec {
             for page_name in 1..=30 {
-                let page = Page::new(book.id.clone(), page_name.to_string(), (index + 1) as u16);
+                let page = Page::new(book.id.clone(), page_name.to_string(), page_name);
                 Page::create()
                     .book_id(page.book_id)
                     .id(page.id)
