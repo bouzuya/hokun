@@ -137,6 +137,7 @@ struct Cli {
 #[derive(::clap::Subcommand)]
 enum Command {
     CreateBook(CreateBookArgs),
+    CreateBookWithPages(CreateBookWithPagesArgs),
     CreatePage(CreatePageArgs),
     CreateUser(CreateUserArgs),
     Migrate,
@@ -150,6 +151,16 @@ struct CreateBookArgs {
     name: String,
     #[arg(long)]
     user_id: String,
+}
+
+#[derive(::clap::Args)]
+struct CreateBookWithPagesArgs {
+    #[arg(long)]
+    name: String,
+    #[arg(long)]
+    user_id: String,
+    #[arg(long)]
+    page: u16,
 }
 
 #[derive(::clap::Args)]
@@ -181,6 +192,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 .user_id(user_id)
                 .exec(&mut db)
                 .await?;
+        }
+        Command::CreateBookWithPages(CreateBookWithPagesArgs {
+            name,
+            user_id,
+            page,
+        }) => {
+            let book_id = ::uuid::Uuid::new_v4().to_string();
+            crate::data::Book::create()
+                .id(&book_id)
+                .name(name)
+                .user_id(user_id)
+                .exec(&mut db)
+                .await?;
+            for p in 1..=page {
+                crate::data::Page::create()
+                    .book_id(&book_id)
+                    .id(::uuid::Uuid::new_v4().to_string())
+                    .name(p.to_string())
+                    .position(p)
+                    .exec(&mut db)
+                    .await?;
+            }
         }
         Command::CreatePage(CreatePageArgs {
             book_id,
