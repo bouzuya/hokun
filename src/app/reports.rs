@@ -114,6 +114,22 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                 "ほうこく の いちらん"
                             )
                         )
+                        if let Some(d) = date {
+                            crate::components::breadcrumb::breadcrumb_item(
+                                crate::components::breadcrumb::breadcrumb_link(
+                                    attrs: ::topcoat::view::attributes!(
+                                        {
+                                            href=(::topcoat::router::href!(crate::app::reports::page).query(
+                                                crate::app::reports::QueryParams {
+                                                    date: Some(d.to_string()),
+                                                },
+                                            ))
+                                        }
+                                    ),
+                                    (d.to_string())
+                                )
+                            )
+                        }
                     )
                 )
 
