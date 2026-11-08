@@ -78,7 +78,12 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                                         selected_book_id.set(e.target.value))
                                 },
                                 for book in books {
-                                    <option selected=(selected_book_id.get() == book.id) value=(&book.id)>(&book.name)</option>
+                                    <option
+                                        selected=(selected_book_id.get() == book.id)
+                                        value=(&book.id)
+                                    >
+                                        (&book.name)
+                                    </option>
                                 }
                             )
                         )
@@ -126,7 +131,12 @@ async fn book_page_select(
         crate::components::select::select(
             attrs: ::topcoat::view::attributes! { name="page_id" },
             for p in book_pages {
-                <option selected=(next_page_id.clone().map(|it| it == p.id).unwrap_or(false)) value=(&p.id)>(&p.name)</option>
+                <option
+                    selected=(next_page_id.clone().map(|it| it == p.id).unwrap_or(false))
+                    value=(&p.id)
+                >
+                    (&p.name)
+                </option>
             }
         )
     })
