@@ -104,18 +104,35 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
                 crate::components::breadcrumb::breadcrumb(
                     crate::components::breadcrumb::breadcrumb_list(
-                        crate::components::breadcrumb::breadcrumb_item(
-                            crate::components::breadcrumb::breadcrumb_link(
-                                attrs: ::topcoat::view::attributes!(
-                                    {
-                                        href="/"
-                                    }
-                                ),
-                                "ほうこく の いちらん"
-                            )
-                        )
+                        match date {
+                            None => {
+                                crate::components::breadcrumb::breadcrumb_page(
+                                    crate::components::breadcrumb::breadcrumb_link(
+                                        attrs: ::topcoat::view::attributes!(
+                                            {
+                                                href="/"
+                                            }
+                                        ),
+                                        "ほうこく の いちらん"
+                                    )
+                                )
+                            }
+                            Some(_) => {
+                                crate::components::breadcrumb::breadcrumb_item(
+                                    crate::components::breadcrumb::breadcrumb_link(
+                                        attrs: ::topcoat::view::attributes!(
+                                            {
+                                                href="/"
+                                            }
+                                        ),
+                                        "ほうこく の いちらん"
+                                    )
+                                )
+                            }
+                        }
                         if let Some(d) = date {
-                            crate::components::breadcrumb::breadcrumb_item(
+                            crate::components::breadcrumb::breadcrumb_separator()
+                            crate::components::breadcrumb::breadcrumb_page(
                                 crate::components::breadcrumb::breadcrumb_link(
                                     attrs: ::topcoat::view::attributes!(
                                         {
