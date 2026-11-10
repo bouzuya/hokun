@@ -47,13 +47,6 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     )
                 )
 
-                <p>
-                    crate::components::a::a(
-                        href: ::topcoat::router::href!(crate::app::reports::page),
-                        "もどる"
-                    )
-                </p>
-
                 <form
                     action=(::topcoat::router::href!(crate::app::reports::page))
                     method="post"
