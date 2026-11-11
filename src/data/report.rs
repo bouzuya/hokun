@@ -89,6 +89,15 @@ impl Reports {
 
     pub async fn update(&self, mut report: Report) -> Result<(), ::toasty::Error> {
         let mut db = self.db.clone();
-        report.update().exec(&mut db).await
+        let book_id = report.book_id.clone();
+        let date = report.date.clone();
+        let page_id = report.page_id.clone();
+        report
+            .update()
+            .book_id(book_id)
+            .date(date)
+            .page_id(page_id)
+            .exec(&mut db)
+            .await
     }
 }

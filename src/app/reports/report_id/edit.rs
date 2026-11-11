@@ -8,14 +8,14 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
 
     let books = crate::app::books(cx);
     let books = books.find_all().await?;
-    let pages = crate::app::pages(cx);
     let reports = crate::app::reports(cx);
     let report = reports.find_by_id(&report_id).await?.ok_or_not_found()?;
 
     let date = report.date.clone();
-    let book_id = report.book_id.clone();
-    let book_pages = pages.find_by_book_id(&book_id).await?;
-    let page_id = report.page_id.clone();
+    let initial_book_id = report.book_id.clone();
+    let selected_book_id = ::topcoat::runtime::signal(cx, || initial_book_id.clone());
+    let initial_page_id = report.page_id.clone();
+    let selected_page_id = ::topcoat::runtime::signal(cx, || initial_page_id.clone());
 
     Ok(::topcoat::view::view! {
         crate::components::layout::layout(
@@ -71,9 +71,17 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                         crate::components::label::label(
                             "ドリル"
                             crate::components::select::select(
-                                attrs: ::topcoat::view::attributes! { name="book_id" },
+                                attrs: ::topcoat::view::attributes! {
+                                    name="book_id"
+                                    @change=$(|e: ::topcoat::runtime::Event| {
+                                        selected_book_id.set(e.target.value)
+                                    })
+                                },
                                 for book in books {
-                                    <option selected=(&book.id == &book_id) value=(&book.id)>
+                                    <option
+                                        selected=(&book.id == &selected_book_id.get())
+                                        value=(&book.id)
+                                    >
                                         (&book.name)
                                     </option>
                                 }
@@ -84,13 +92,11 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <div>
                         crate::components::label::label(
                             "ページ"
-                            crate::components::select::select(
-                                attrs: ::topcoat::view::attributes! { name="page_id" },
-                                for page in book_pages {
-                                    <option selected=(&page.id == &page_id) value=(&page.id)>
-                                        (&page.name)
-                                    </option>
-                                }
+                            book_page_select(
+                                book_id: selected_book_id.get(),
+                                use_next_page: selected_book_id.get() != initial_book_id || selected_page_id.get() != initial_page_id,
+                                initial_page_id: report.page_id.clone(),
+                                selected_page_id: selected_page_id,
                             )
                         )
                     </div>
@@ -101,6 +107,52 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     )
                 </form>
             </div>
+        )
+    })
+}
+
+#[::topcoat::view::component]
+async fn book_page_select(
+    cx: &::topcoat::context::Cx,
+    book_id: String,
+    use_next_page: bool,
+    initial_page_id: String,
+    selected_page_id: ::topcoat::runtime::Signal<String>,
+) -> ::topcoat::Result<impl ::topcoat::view::View> {
+    let pages = crate::app::pages(cx);
+    let reports = crate::app::reports(cx);
+    let last_report = reports.find_last_by_book(&book_id).await?;
+    let last_report_position = last_report.map(|it| it.page.get().position);
+    let mut book_pages = pages.find_by_book_id(&book_id).await?;
+    book_pages.sort_by_key(|it| it.position);
+    let next_page_id = match last_report_position {
+        None => book_pages.iter().next(),
+        Some(last_report_position) => book_pages
+            .iter()
+            .skip_while(|it| it.position <= last_report_position)
+            .next(),
+    }
+    .map(|it| it.id.clone());
+    Ok(::topcoat::view::view! {
+        crate::components::select::select(
+            attrs: ::topcoat::view::attributes! {
+                name="page_id"
+                @change=$(|e: ::topcoat::runtime::Event| {
+                    selected_page_id.set(e.target.value)
+                })
+            },
+            for p in book_pages {
+                <option
+                    selected=(if use_next_page {
+                        next_page_id.clone().map(|it| it == p.id).unwrap_or(false)
+                    } else {
+                        initial_page_id == p.id
+                    })
+                    value=(&p.id)
+                >
+                    (&p.name)
+                </option>
+            }
         )
     })
 }
