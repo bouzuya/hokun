@@ -2,8 +2,7 @@ use topcoat::router::error::RouterErrorExt;
 
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
-    let report_id: &String =
-        ::topcoat::router::path_param::<crate::app::reports::report_id::ReportId>(cx)?;
+    let report_id: &String = crate::app::reports::report_id::report_id(cx)?;
     let report_id = report_id.to_string();
 
     let books = crate::app::books(cx);
@@ -45,8 +44,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                 <form
                     action=(::topcoat::router::href!(
                         crate::app::reports::report_id::update,
-                        crate::app::reports::report_id::ReportId(report_id.clone()),
-                    ).resolve(cx))
+                        crate::app::reports::report_id::report_id: report_id.clone(),
+                    ).resolve(
+                        cx,
+                    ))
                     method="post"
                 >
                     crate::components::input::input(
@@ -94,9 +95,10 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                             "ページ"
                             book_page_select(
                                 book_id: selected_book_id.get(),
-                                use_next_page: selected_book_id.get() != initial_book_id || selected_page_id.get() != initial_page_id,
+                                use_next_page: selected_book_id.get() != initial_book_id
+                                    || selected_page_id.get() != initial_page_id,
                                 initial_page_id: report.page_id.clone(),
-                                selected_page_id: selected_page_id,
+                                selected_page_id: selected_page_id
                             )
                         )
                     </div>

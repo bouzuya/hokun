@@ -1,9 +1,9 @@
 pub mod edit;
 
-::topcoat::router::module_param!(pub report_id: String, error = bad_request);
+::topcoat::router::module_param!(pub report_id: String else bad_request);
 
 #[::topcoat::router::page]
-pub async fn page() -> ::topcoat::Result<()> {
+pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<()> {
     Err(::topcoat::router::error::not_found().into())
 }
 
@@ -29,7 +29,7 @@ pub async fn update(
         .into());
     }
 
-    let report_id = ::topcoat::router::path_param::<crate::app::reports::report_id::ReportId>(cx)?;
+    let report_id: &String = crate::app::reports::report_id::report_id(cx)?;
     let reports = crate::app::reports(cx);
 
     // FIXME: validate form

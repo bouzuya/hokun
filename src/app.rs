@@ -21,7 +21,7 @@ impl App {
 }
 
 fn app(cx: &::topcoat::context::Cx) -> &App {
-    ::topcoat::context::app_context::<App>(cx)
+    ::topcoat::context::context::<App>(cx)
 }
 
 pub fn books(cx: &::topcoat::context::Cx) -> Books {
@@ -42,18 +42,14 @@ pub fn users(cx: &::topcoat::context::Cx) -> Users {
 
 pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
     use ::topcoat::asset::RouterBuilderAssetExt;
-    use ::topcoat::cookie::RouterBuilderCookieExt as _;
     use ::topcoat::router::RouterBuilderDiscoverExt as _;
-    use ::topcoat::runtime::RouterBuilderRuntimeExt as _;
-    use ::topcoat::session::RouterBuilderSessionExt as _;
 
     Ok(::topcoat::router::module_router!()
-        .cookies()
-        .sessions(::topcoat::session::SessionConfig::default())
         .discover()
         .assets(::topcoat::asset::AssetBundle::load()?)
-        .app_context(app)
-        .runtime()
+        .layer(::topcoat::cookie::CookieLayer::new())
+        .layer(::topcoat::runtime::RuntimeLayer::new())
+        .with(app)
         .build())
 }
 

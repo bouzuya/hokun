@@ -11,7 +11,7 @@ serde = { version = "1.0.229", features = ["derive"] }
 toasty = { version = "0.11.0", features = ["migration", "sqlite"] }
 toasty-cli = "0.11.0"
 tokio = { version = "1.53.2", features = ["rt-multi-thread", "macros"] }
-topcoat = { version = "0.10.0", features = [
+topcoat = { version = "0.12.1", features = [
     "font-fontsource",
     "icon-iconify",
     "tailwind",

@@ -1,5 +1,6 @@
 #[::topcoat::view::component]
 pub async fn layout(
+    cx: &::topcoat::context::Cx,
     #[default] title: &str,
 
     #[default] child: ::topcoat::view::Child<'_>,

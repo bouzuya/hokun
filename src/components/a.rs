@@ -5,6 +5,7 @@ pub async fn a<
     Q: ::topcoat::router::HrefQueries + Send,
     F: std::fmt::Display + Send,
 >(
+    cx: &::topcoat::context::Cx,
     href: topcoat::router::Href<T, P, Q, F>,
     child: ::topcoat::view::Child<'_>,
 ) -> ::topcoat::Result<impl topcoat::view::View> {

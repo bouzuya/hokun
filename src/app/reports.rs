@@ -245,7 +245,7 @@ pub async fn report_link(
         crate::components::a::a(
             href: ::topcoat::router::href!(
                 crate::app::reports::report_id::edit::page,
-                crate::app::reports::report_id::ReportId(report.id.clone()),
+                crate::app::reports::report_id::report_id: report.id.clone(),
             ),
             if show_date {
                 <span>(report.date.clone())</span>

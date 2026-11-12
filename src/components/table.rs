@@ -1,9 +1,14 @@
 use topcoat::{
     Result,
+    context::Cx,
     view::{Attributes, Child, View, class, component, view},
 };
 
 /// A table inside a horizontally scrollable container.
+///
+/// Extra padding on the left and right aligns the cells with a card's content.
+/// Top and bottom borders separate the table from neighboring elements. A border
+/// is omitted when the table is the first or last child on that side.
 ///
 /// Pass table sections as children. `attrs` are forwarded to the `<table>`, with extra
 /// classes added to its classes.
@@ -28,14 +33,17 @@ use topcoat::{
 /// ```
 #[component]
 pub async fn table(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
     Ok(view! {
-        <div class="w-full overflow-x-auto">
+        <div data-slot="table" class="w-full overflow-x-auto">
+            // Put borders on the table so the caption stays outside them.
             <table
                 class=(class!(
-                    "w-full caption-bottom border-collapse text-sm",
+                    "w-full caption-bottom border-collapse border-border text-sm",
+                    "[:not(:first-child)>&]:border-t [:not(:last-child)>&]:border-b",
                     attrs.remove("class"),
                 ))
                 (attrs)
@@ -49,11 +57,15 @@ pub async fn table(
 /// The heading section of a [`table`], holding the row of column headers.
 #[component]
 pub async fn table_header(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
     Ok(view! {
-        <thead class=(class!("[&_tr]:border-b", attrs.remove("class"))) (attrs)>
+        <thead
+            class=(class!("bg-foreground/5 [&_tr]:border-b", attrs.remove("class")))
+            (attrs)
+        >
             (child)
         </thead>
     })
@@ -62,6 +74,7 @@ pub async fn table_header(
 /// The body of a table, containing data rows.
 #[component]
 pub async fn table_body(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
@@ -78,6 +91,7 @@ pub async fn table_body(
 /// The closing section of a [`table`], for totals and other summaries.
 #[component]
 pub async fn table_footer(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
@@ -97,6 +111,7 @@ pub async fn table_footer(
 /// A table row with a separator and hover styling.
 #[component]
 pub async fn table_row(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
@@ -116,14 +131,15 @@ pub async fn table_row(
 /// A column header in a [`table_header`]'s row.
 #[component]
 pub async fn table_head(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
     Ok(view! {
         <th
             class=(class!(
-                "h-10 px-3 text-left align-middle font-medium whitespace-nowrap \
-                 text-muted-foreground",
+                "p-3 text-left align-middle font-medium whitespace-nowrap",
+                "text-muted-foreground first:pl-6 last:pr-6",
                 attrs.remove("class"),
             ))
             (attrs)
@@ -136,12 +152,16 @@ pub async fn table_head(
 /// One cell of a [`table_row`].
 #[component]
 pub async fn table_cell(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
     Ok(view! {
         <td
-            class=(class!("p-3 align-middle whitespace-nowrap", attrs.remove("class")))
+            class=(class!(
+                "p-3 align-middle whitespace-nowrap first:pl-6 last:pr-6",
+                attrs.remove("class"),
+            ))
             (attrs)
         >
             (child)
@@ -152,6 +172,7 @@ pub async fn table_cell(
 /// A caption describing the table.
 #[component]
 pub async fn table_caption(
+    cx: &Cx,
     #[default] mut attrs: Attributes,
     #[default] child: Child<'_>,
 ) -> Result<impl View> {
