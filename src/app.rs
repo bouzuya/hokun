@@ -49,6 +49,9 @@ pub fn router(app: App) -> ::topcoat::Result<::topcoat::router::Router> {
         .assets(::topcoat::asset::AssetBundle::load()?)
         .layer(::topcoat::cookie::CookieLayer::new())
         .layer(::topcoat::runtime::RuntimeLayer::new())
+        .with(::topcoat::session::SessionTokenStore::new(
+            ::topcoat::session::cookie::CookieTokenStore::new(),
+        ))
         .with(app)
         .build())
 }
