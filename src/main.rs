@@ -16,7 +16,7 @@ pub async fn setup_db() -> Result<::toasty::Db, Box<dyn std::error::Error + Send
         .connect(if is_topcoat_dev {
             "sqlite::memory:"
         } else {
-            "sqlite:./hokun.db"
+            "sqlite:./db/hokun.db"
         })
         .await?;
 
