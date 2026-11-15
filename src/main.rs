@@ -140,6 +140,7 @@ enum Command {
     CreateBookWithPages(CreateBookWithPagesArgs),
     CreatePage(CreatePageArgs),
     CreateUser(CreateUserArgs),
+    ListUsers(ListUsersArgs),
     Migrate,
     Migration(::toasty_cli::MigrationCommand),
     Serve,
@@ -178,6 +179,9 @@ struct CreateUserArgs {
     #[arg(long)]
     name: String,
 }
+
+#[derive(::clap::Args)]
+struct ListUsersArgs {}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -234,6 +238,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 .name(name)
                 .exec(&mut db)
                 .await?;
+        }
+        Command::ListUsers(_) => {
+            let users = crate::data::User::all().exec(&mut db).await?;
+            for user in users {
+                println!("User: {} - {}", user.id, user.name);
+            }
         }
         Command::Migrate => {
             let db = crate::setup_db().await?;
