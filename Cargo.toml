@@ -20,7 +20,7 @@ topcoat = { version = "0.12.1", features = [
 uuid = { version = "1.28.0", features = ["v4"] }
 
 [build-dependencies]
-topcoat = { version = "0.10.0", default-features = false, features = [
+topcoat = { version = "0.12.1", default-features = false, features = [
     "icon-iconify",
     "tailwind",
 ] }
