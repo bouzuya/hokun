@@ -17,7 +17,7 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . ./
 RUN cargo build --release
-RUN topcoat asset bundle --bin server --release
+RUN topcoat asset bundle --release
 
 FROM debian:trixie-slim AS runtime
 RUN apt-get update && apt-get install -y \
