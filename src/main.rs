@@ -1,6 +1,9 @@
 pub mod app;
 pub mod components;
 pub mod data;
+mod insecure_cookie_token_store;
+
+pub use self::insecure_cookie_token_store::InsecureCookieTokenStore;
 
 pub async fn setup_db() -> Result<::toasty::Db, Box<dyn std::error::Error + Send + Sync>> {
     let is_topcoat_dev = std::env::var_os("TOPCOAT_DEV_URL").is_some();

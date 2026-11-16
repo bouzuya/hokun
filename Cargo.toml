@@ -17,6 +17,8 @@ topcoat = { version = "0.12.1", features = [
     "tailwind",
     "ui",
 ] }
+topcoat-cookie = "0.12.1"
+topcoat-core = "0.12.1"
 uuid = { version = "1.28.0", features = ["v4"] }
 
 [build-dependencies]

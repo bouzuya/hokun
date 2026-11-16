@@ -1047,6 +1047,8 @@ dependencies = [
  "toasty-cli",
  "tokio",
  "topcoat",
+ "topcoat-cookie",
+ "topcoat-core",
  "uuid",
 ]
 
