@@ -1,9 +1,14 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    icon::{icon, iconify::iconify_icon},
-    view::{Attributes, Child, View, attributes, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::icon::icon;
+use topcoat::icon::iconify::iconify_icon;
+use topcoat::view::Attributes;
+use topcoat::view::Child;
+use topcoat::view::View;
+use topcoat::view::attributes;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// Navigation links showing the path to the current page.
 ///

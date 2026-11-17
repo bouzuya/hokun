@@ -1,8 +1,11 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    view::{Attributes, StaticClass, View, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::view::Attributes;
+use topcoat::view::StaticClass;
+use topcoat::view::View;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// Classes for the input's dimensions, border, and interaction states.
 const INPUT: StaticClass = class!(

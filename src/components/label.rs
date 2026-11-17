@@ -1,8 +1,12 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    view::{Attributes, Child, StaticClass, View, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::view::Attributes;
+use topcoat::view::Child;
+use topcoat::view::StaticClass;
+use topcoat::view::View;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// Classes that align label content and reflect the disabled state of a nearby or
 /// nested control.

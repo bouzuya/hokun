@@ -1,8 +1,11 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    view::{Attributes, Child, View, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::view::Attributes;
+use topcoat::view::Child;
+use topcoat::view::View;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// A table inside a horizontally scrollable container.
 ///

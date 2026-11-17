@@ -1,8 +1,13 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    view::{Attributes, Child, Class, StaticClass, View, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::view::Attributes;
+use topcoat::view::Child;
+use topcoat::view::Class;
+use topcoat::view::StaticClass;
+use topcoat::view::View;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// The visual style of a [`button`].
 ///

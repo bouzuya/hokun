@@ -1,9 +1,14 @@
-use std::{borrow::Cow, time::Duration};
+use std::borrow::Cow;
+use std::time::Duration;
 
-use topcoat_cookie::{Cookie, Cookies, SameSite};
+use topcoat_cookie::Cookie;
+use topcoat_cookie::Cookies;
+use topcoat_cookie::SameSite;
 use topcoat_core::context::Cx;
 
-use topcoat::session::{self, Token, TokenStore, TokenStoreFuture};
+use topcoat::session::Token;
+use topcoat::session::TokenStore;
+use topcoat::session::TokenStoreFuture;
 
 fn cookies(cx: &Cx) -> impl Cookies {
     topcoat_cookie::cookies(cx)

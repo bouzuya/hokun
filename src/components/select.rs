@@ -1,9 +1,16 @@
-use topcoat::{
-    Result,
-    context::Cx,
-    icon::{IconData, icon, iconify::iconify_icon},
-    view::{Attributes, Child, StaticClass, View, attributes, class, component, view},
-};
+use topcoat::Result;
+use topcoat::context::Cx;
+use topcoat::icon::IconData;
+use topcoat::icon::icon;
+use topcoat::icon::iconify::iconify_icon;
+use topcoat::view::Attributes;
+use topcoat::view::Child;
+use topcoat::view::StaticClass;
+use topcoat::view::View;
+use topcoat::view::attributes;
+use topcoat::view::class;
+use topcoat::view::component;
+use topcoat::view::view;
 
 /// Classes for the select control, with space for a custom dropdown arrow.
 const SELECT: StaticClass = class!(
