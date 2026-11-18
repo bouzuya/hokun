@@ -54,9 +54,8 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
                     <div>
                         crate::components::label::label(
                             "ひづけ"
-                            <span>(date.clone())</span>
                             crate::components::input::input(
-                                attrs: ::topcoat::view::attributes! { name="date" type="hidden" value=(date) }
+                                attrs: ::topcoat::view::attributes! { name="date" type="date" value=(date) }
                             )
                         )
                     </div>
