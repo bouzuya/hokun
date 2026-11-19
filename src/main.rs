@@ -62,15 +62,16 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
         let users = users.find_all().await?;
         let user_id = users[0].id.clone();
         let books = vec![
-            Book::new("こくご".to_string(), user_id.clone()),
-            Book::new("さんすう".to_string(), user_id.clone()),
-            Book::new("えいご".to_string(), user_id.clone()),
+            Book::new("こくご".to_string(), user_id.clone(), 1),
+            Book::new("さんすう".to_string(), user_id.clone(), 2),
+            Book::new("えいご".to_string(), user_id.clone(), 3),
         ];
         for book in books {
             Book::create()
                 .id(book.id)
                 .name(book.name)
                 .user_id(book.user_id)
+                .position(book.position)
                 .exec(&mut db)
                 .await?;
         }
