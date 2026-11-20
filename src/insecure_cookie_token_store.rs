@@ -16,7 +16,7 @@ fn cookies(cx: &Cx) -> impl Cookies {
         .override_http_only(true)
         .override_secure(false)
         .override_path("/")
-        .override_prefix_host()
+    // .override_prefix_host()
 }
 
 const SESSION_COOKIE_NAME: &str = "session";
