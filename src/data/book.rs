@@ -40,4 +40,12 @@ impl Books {
             .into_iter()
             .next())
     }
+
+    pub async fn filter_by_user_id(&self, user_id: &str) -> Result<Vec<Book>, ::toasty::Error> {
+        let mut db = self.db.clone();
+        Ok(Book::filter(Book::fields().user_id().eq(user_id))
+            .order_by(Book::fields().position().asc())
+            .exec(&mut db)
+            .await?)
+    }
 }
