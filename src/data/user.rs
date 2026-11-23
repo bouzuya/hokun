@@ -1,4 +1,4 @@
-#[derive(Clone, ::toasty::Model)]
+#[derive(Clone, Debug, ::toasty::Model)]
 #[key(id)]
 pub struct User {
     pub id: String,

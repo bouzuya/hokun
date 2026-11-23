@@ -60,11 +60,13 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
         use crate::data::Book;
 
         let users = users.find_all().await?;
-        let user_id = users[0].id.clone();
+        let user1_id = users[0].id.clone();
+        let user2_id = users[1].id.clone();
         let books = vec![
-            Book::new("こくご".to_string(), user_id.clone(), 1),
-            Book::new("さんすう".to_string(), user_id.clone(), 2),
-            Book::new("えいご".to_string(), user_id.clone(), 3),
+            Book::new("こくご".to_string(), user1_id.clone(), 1),
+            Book::new("さんすう".to_string(), user1_id.clone(), 2),
+            Book::new("えいご".to_string(), user1_id.clone(), 3),
+            Book::new("ひらがな".to_string(), user2_id.clone(), 1),
         ];
         for book in books {
             Book::create()

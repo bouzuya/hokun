@@ -1,3 +1,5 @@
+use topcoat::router::error::RouterErrorExt as _;
+
 #[::topcoat::router::query_params(error = bad_request)]
 #[derive(serde::Serialize)]
 pub struct QueryParams {
@@ -7,8 +9,10 @@ pub struct QueryParams {
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
     let QueryParams { date } = ::topcoat::router::query_params::<QueryParams>(cx)?;
+    let user = crate::app::current_user(cx).await?.ok_or_not_found()?;
+
     let books = crate::app::books(cx);
-    let books = books.find_all().await?;
+    let books = books.filter_by_user_id(&user.id).await?;
 
     let date = date
         .as_deref()
