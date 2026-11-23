@@ -64,10 +64,13 @@ pub async fn current_user(cx: &::topcoat::context::Cx) -> ::topcoat::Result<Opti
     load_session_user(cx, &hash).await
 }
 
-pub async fn verify_credentials(cx: &::topcoat::context::Cx) -> ::topcoat::Result<User> {
+pub async fn verify_credentials(
+    cx: &::topcoat::context::Cx,
+    user_id: &str,
+) -> ::topcoat::Result<User> {
     let users = users(cx);
     let users = users.find_all().await?;
-    Ok(users[0].clone())
+    Ok(users.into_iter().find(|u| u.id == user_id).unwrap())
 }
 
 pub async fn load_session_user(

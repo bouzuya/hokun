@@ -6,9 +6,9 @@ pub struct FormParams {
 #[::topcoat::router::route(POST)]
 pub async fn login(
     cx: &::topcoat::context::Cx,
-    ::topcoat::router::content::Form(_form): ::topcoat::router::content::Form<FormParams>,
+    ::topcoat::router::content::Form(form): ::topcoat::router::content::Form<FormParams>,
 ) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
-    let user = crate::app::verify_credentials(cx).await?;
+    let user = crate::app::verify_credentials(cx, &form.user_id).await?;
 
     let session = ::topcoat::session::start(cx).await?;
     crate::app::persist_session(cx, &user, &session).await?;
