@@ -2,11 +2,13 @@ use topcoat::router::error::RouterErrorExt;
 
 #[::topcoat::router::page]
 pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topcoat::view::View> {
+    let user = crate::app::current_user(cx).await?.ok_or_not_found()?;
+
     let report_id: &String = crate::app::reports::report_id::report_id(cx)?;
     let report_id = report_id.to_string();
 
     let books = crate::app::books(cx);
-    let books = books.find_all().await?;
+    let books = books.filter_by_user_id(&user.id).await?;
     let reports = crate::app::reports(cx);
     let report = reports.find_by_id(&report_id).await?.ok_or_not_found()?;
 
