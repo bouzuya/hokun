@@ -1,4 +1,5 @@
 use chrono::Datelike as _;
+use topcoat::router::error::RouterErrorExt as _;
 
 pub mod new;
 pub mod report_id;
@@ -16,6 +17,7 @@ pub async fn create(
     ::topcoat::router::content::Form(form): ::topcoat::router::content::Form<FormParams>,
 ) -> ::topcoat::Result<::topcoat::router::error::SeeOther> {
     let reports = crate::app::reports(cx);
+    let user = crate::app::current_user(cx).await?.ok_or_not_found()?;
 
     // FIXME: validate form
 
@@ -24,6 +26,7 @@ pub async fn create(
             form.book_id.clone(),
             form.date.clone(),
             form.page_id.clone(),
+            user.id.clone(),
         ))
         .await?;
 

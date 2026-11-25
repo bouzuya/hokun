@@ -100,24 +100,26 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
     {
         use crate::data::Report;
 
+        let users = users.find_all().await?;
+        let user1_id = users[0].id.clone();
         let reports = [
             {
                 let book_id = books.find_all().await?[0].id.clone();
                 let book_pages = pages.find_by_book_id(&book_id).await?;
                 let page_id = book_pages[1].id.clone();
-                Report::new(book_id, "2026-10-01".to_string(), page_id)
+                Report::new(book_id, "2026-10-01".to_string(), page_id, user1_id.clone())
             },
             {
                 let book_id = books.find_all().await?[1].id.clone();
                 let book_pages = pages.find_by_book_id(&book_id).await?;
                 let page_id = book_pages[2].id.clone();
-                Report::new(book_id, "2026-10-01".to_string(), page_id)
+                Report::new(book_id, "2026-10-01".to_string(), page_id, user1_id.clone())
             },
             {
                 let book_id = books.find_all().await?[1].id.clone();
                 let book_pages = pages.find_by_book_id(&book_id).await?;
                 let page_id = book_pages[3].id.clone();
-                Report::new(book_id, "2026-10-02".to_string(), page_id)
+                Report::new(book_id, "2026-10-02".to_string(), page_id, user1_id.clone())
             },
         ];
         for report in reports {
@@ -126,6 +128,7 @@ async fn setup_dummy_data(mut db: ::toasty::Db) -> Result<(), ::toasty::Error> {
                 .book_id(report.book_id)
                 .date(report.date)
                 .page_id(report.page_id)
+                .user_id(report.user_id)
                 .exec(&mut db)
                 .await?;
         }

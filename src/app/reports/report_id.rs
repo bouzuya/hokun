@@ -1,3 +1,5 @@
+use topcoat::router::error::RouterErrorExt as _;
+
 pub mod edit;
 
 ::topcoat::router::module_param!(pub report_id: String else bad_request);
@@ -29,6 +31,7 @@ pub async fn update(
         .into());
     }
 
+    let user = crate::app::current_user(cx).await?.ok_or_not_found()?;
     let report_id: &String = crate::app::reports::report_id::report_id(cx)?;
     let reports = crate::app::reports(cx);
 
@@ -37,6 +40,7 @@ pub async fn update(
         form.book_id.clone(),
         form.date.clone(),
         form.page_id.clone(),
+        user.id.clone(),
     );
     report.id = report_id.to_string();
     reports.update(report).await?;

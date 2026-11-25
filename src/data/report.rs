@@ -7,16 +7,18 @@ pub struct Report {
     #[belongs_to(key = page_id, references = id)]
     pub page: ::toasty::Deferred<crate::data::Page>,
     pub page_id: String,
+    pub user_id: String,
 }
 
 impl Report {
-    pub fn new(book_id: String, date: String, page_id: String) -> Self {
+    pub fn new(book_id: String, date: String, page_id: String, user_id: String) -> Self {
         Self {
             book_id,
             date,
             id: ::uuid::Uuid::new_v4().to_string(),
             page: ::toasty::Deferred::default(),
             page_id,
+            user_id,
         }
     }
 }
@@ -37,6 +39,7 @@ impl Reports {
             .book_id(report.book_id)
             .date(report.date)
             .page_id(report.page_id)
+            .user_id(report.user_id)
             .exec(&mut db)
             .await?;
         Ok(())
@@ -92,11 +95,13 @@ impl Reports {
         let book_id = report.book_id.clone();
         let date = report.date.clone();
         let page_id = report.page_id.clone();
+        // let user_id = report.user_id.clone();
         report
             .update()
             .book_id(book_id)
             .date(date)
             .page_id(page_id)
+            // .user_id(user_id)
             .exec(&mut db)
             .await
     }
