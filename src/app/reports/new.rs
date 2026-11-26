@@ -32,6 +32,21 @@ pub async fn page(cx: &::topcoat::context::Cx) -> ::topcoat::Result<impl ::topco
             <div class="flex flex-col gap-4">
                 <h1 class="text-2xl font-bold">"あたらしい ほうこく"</h1>
 
+                <div>
+                    <form
+                        method="post"
+                        action=(::topcoat::router::href!(crate::app::logout::logout).resolve(
+                            cx,
+                        ))
+                    >
+                        crate::components::button::button(
+                            attrs: ::topcoat::view::attributes! { type="submit" },
+                            "ログアウト"
+                        )
+                    </form>
+                </div>
+
+
                 crate::components::breadcrumb::breadcrumb(
                     crate::components::breadcrumb::breadcrumb_list(
                         crate::components::breadcrumb::breadcrumb_item(
